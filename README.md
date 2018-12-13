@@ -9,17 +9,17 @@ The Android will be made first, as I don't own any iPhones nor Macbook, which ma
 The app *should* work on iOS but, I still need a Macbook and iPhone to test/build.
 
 ## Todo
-[ ] Forum Categories
-[ ] Forum
-[ ] Thread
-[ ] Image viewer
-[ ] View user profile
-[ ] Authenticate
-[ ] - Twitter
-[ ] - Facebook
-[ ] - Google
-[ ] - Github
-[ ] - Steam
-[ ] Make post in thread
-[ ] Make thread
-[ ] Rate posts
+- [ ] Forum Categories
+- [ ] Forum
+- [ ] Thread
+- [ ] Image viewer
+- [ ] View user profile
+- [ ] Authenticate
+- [ ] Auth: Twitter
+- [ ] Auth: Facebook
+- [ ] Auth: Google
+- [ ] Auth: Github
+- [ ] Auth: Steam
+- [ ] Make post in thread
+- [ ] Make thread
+- [ ] Rate posts
