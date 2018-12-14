@@ -15,6 +15,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http: any
   sqflite: any
   shared_preferences: ^0.4.3
   chewie: ^0.8.0
