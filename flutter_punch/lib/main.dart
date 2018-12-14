@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_punch/models/CategoryListModel.dart';
+import 'dart:convert';
 
 void main() => runApp(MyApp());
 
@@ -46,14 +49,34 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  @override
+  void initState() {
+    super.initState();
+
+    fetchCategories().then((data) {
+      print(data.categories[0].categoryName);
+    });
+  }
+
+
+  Future<CategoryListModel> fetchCategories() async {
+    print('Fetching categories');
+    final response =
+      await http.get('https://facepunch-api-eu.herokuapp.com/');
+      if (response.statusCode == 200) {
+        // If server returns an OK response, parse the JSON
+        return CategoryListModel.fromJson(json.decode(response.body));
+      } else {
+        // If that response was not OK, throw an error.
+        throw Exception('Failed to load post');
+      }
+  }
+
+
   void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+    fetchCategories().then((data) {
+      print(data.categories[0].categoryName);
+      print(data.categories[0].forums[0].title);
     });
   }
 
