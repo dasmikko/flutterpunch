@@ -10,7 +10,7 @@ The app *should* work on iOS but, I still need a Macbook and iPhone to test/buil
 
 ## Todo
 - [x] Forum Categories
-- [ ] Forum
+- [x] Forum
 - [ ] Thread
 - [ ] Image viewer
 - [ ] View user profile
