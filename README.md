@@ -1,5 +1,5 @@
 # flutterpunch
-New and fresh Facepunch app, made in flutter
+New and fresh Facepunch app, made in flutter,
 
 ## What is planned?
 An Android and iOS version
@@ -9,7 +9,7 @@ The Android will be made first, as I don't own any iPhones nor Macbook, which ma
 The app *should* work on iOS but, I still need a Macbook and iPhone to test/build.
 
 ## Todo
-- [ ] Forum Categories
+- [x] Forum Categories
 - [ ] Forum
 - [ ] Thread
 - [ ] Image viewer
