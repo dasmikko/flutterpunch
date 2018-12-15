@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_punch/models/CategoryListModel.dart';
+import 'package:flutter_punch/models/CategoryModel.dart';
+import 'package:flutter_punch/models/ForumsModel.dart';
+import 'package:flutter_punch/widgets/CategoryWidget.dart';
 import 'dart:convert';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,9 +23,9 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.red,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Flutter Punch'),
     );
   }
 }
@@ -48,6 +50,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  CategoryListModel categoryList =
+      new CategoryListModel(categories: new List<CategoryModel>());
 
   @override
   void initState() {
@@ -55,28 +59,29 @@ class _MyHomePageState extends State<MyHomePage> {
 
     fetchCategories().then((data) {
       print(data.categories[0].categoryName);
+      setState(() {
+        categoryList = data;
+      });
     });
   }
 
-
   Future<CategoryListModel> fetchCategories() async {
     print('Fetching categories');
-    final response =
-      await http.get('https://facepunch-api-eu.herokuapp.com/');
-      if (response.statusCode == 200) {
-        // If server returns an OK response, parse the JSON
-        return CategoryListModel.fromJson(json.decode(response.body));
-      } else {
-        // If that response was not OK, throw an error.
-        throw Exception('Failed to load post');
-      }
+    final response = await http.get('https://facepunch-api-eu.herokuapp.com/');
+    if (response.statusCode == 200) {
+      // If server returns an OK response, parse the JSON
+      return CategoryListModel.fromJson(json.decode(response.body));
+    } else {
+      // If that response was not OK, throw an error.
+      throw Exception('Failed to load post');
+    }
   }
-
 
   void _incrementCounter() {
     fetchCategories().then((data) {
-      print(data.categories[0].categoryName);
-      print(data.categories[0].forums[0].title);
+      setState(() {
+        categoryList = data;
+      });
     });
   }
 
@@ -94,34 +99,24 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
+      body: Container(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
+        child: ListView.builder(
+          itemCount: categoryList.categories.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  CategoryWidget(
+                      categoryTitle:
+                          categoryList.categories[index].categoryName,
+                      forums: categoryList.categories[index].forums)
+                ],
+              ),
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
