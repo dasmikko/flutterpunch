@@ -6,6 +6,7 @@ import 'package:flutter_punch/models/ForumsModel.dart';
 import 'package:flutter_punch/widgets/CategoryWidget.dart';
 import 'dart:convert';
 import 'package:flutter_punch/screens/forum.dart';
+import 'package:flutter_punch/helpers/API.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -40,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    fetchCategories().then((data) {
+    APIHelper().fetchCategories().then((data) {
       print(data.categories[0].categoryName);
       setState(() {
         categoryList = data;
@@ -48,20 +49,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Future<CategoryListModel> fetchCategories() async {
-    print('Fetching categories');
-    final response = await http.get('https://facepunch-api-eu.herokuapp.com/');
-    if (response.statusCode == 200) {
-      // If server returns an OK response, parse the JSON
-      return CategoryListModel.fromJson(json.decode(response.body));
-    } else {
-      // If that response was not OK, throw an error.
-      throw Exception('Failed to load post');
-    }
-  }
-
   void _incrementCounter() {
-    fetchCategories().then((data) {
+    APIHelper().fetchCategories().then((data) {
       setState(() {
         categoryList = data;
       });
