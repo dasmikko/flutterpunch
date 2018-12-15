@@ -7,8 +7,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 class CategoryWidget extends StatelessWidget {
   final String categoryTitle;
   final List<ForumsModel> forums;
+  final VoidCallback onForumTap;
 
-  CategoryWidget({@required this.categoryTitle, @required this.forums});
+  CategoryWidget(
+      {@required this.categoryTitle,
+      @required this.forums,
+      @required this.onForumTap});
 
   //  Row(children: forums.map((forum) => Text(forum.title)).toList()),
 
@@ -30,40 +34,39 @@ class CategoryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Container(
-            decoration: new BoxDecoration(
-                color: Colors.blueGrey[50],
-                border: new Border.all(color: Colors.blueGrey[100])),
-            padding: EdgeInsets.all(16.0),
-            child: Text(categoryTitle),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Container(
+          decoration: new BoxDecoration(
+              color: Colors.blueGrey[50],
+              border: new Border.all(color: Colors.blueGrey[100])),
+          padding: EdgeInsets.all(16.0),
+          child: Text(categoryTitle),
+        ),
+        Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: forums
+                .map((forum) => InkWell(
+                    onTap: onForumTap,
+                    child: Container(
+                        padding: EdgeInsets.all(16.0),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                                margin: EdgeInsets.only(right: 16.0),
+                                child: isSVGOrImage(forum.id, forum.icon)),
+                            Text(forum.title)
+                          ],
+                        ))))
+                .toList(),
           ),
-          Container(
-            padding: EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: forums
-                  .map((forum) => Container(
-                      padding: EdgeInsets.all(16.0),
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                              margin: EdgeInsets.only(right: 16.0),
-                              child: isSVGOrImage(forum.id, forum.icon)),
-                          Text(forum.title)
-                        ],
-                      )))
-                  .toList(),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

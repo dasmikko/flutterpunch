@@ -110,9 +110,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   CategoryWidget(
-                      categoryTitle:
-                          categoryList.categories[index].categoryName,
-                      forums: categoryList.categories[index].forums)
+                    categoryTitle: categoryList.categories[index].categoryName,
+                    forums: categoryList.categories[index].forums,
+                    onForumTap: () {
+                      print('Clicked forum');
+                    },
+                  ),
                 ],
               ),
             );
