@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_punch/models/CategoryListModel.dart';
-import 'package:flutter_punch/models/CategoryModel.dart';
 import 'package:flutter_punch/models/ForumsModel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
