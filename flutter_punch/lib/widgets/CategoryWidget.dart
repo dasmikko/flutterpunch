@@ -7,7 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class CategoryWidget extends StatelessWidget {
   final String categoryTitle;
   final List<ForumsModel> forums;
-  final VoidCallback onForumTap;
+  final ValueChanged<ForumsModel> onForumTap;
 
   CategoryWidget(
       {@required this.categoryTitle,
@@ -22,12 +22,12 @@ class CategoryWidget extends StatelessWidget {
     if (forumId == "gmodgd" || forumId == "rust") {
       return Image(
         image: NetworkImage(icon),
-        width: 30.0,
+        width: 30,
       );
     } else {
       return SvgPicture.network(
         icon,
-        width: 30.0,
+        width: 30,
       );
     }
   }
@@ -52,15 +52,27 @@ class CategoryWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: forums
                 .map((forum) => InkWell(
-                    onTap: onForumTap,
+                    onTap: () => onForumTap(forum),
                     child: Container(
                         padding: EdgeInsets.all(16.0),
                         child: Row(
                           children: <Widget>[
                             Container(
-                                margin: EdgeInsets.only(right: 16.0),
-                                child: isSVGOrImage(forum.id, forum.icon)),
-                            Text(forum.title)
+                              margin: EdgeInsets.only(right: 16.0),
+                              child: isSVGOrImage(forum.id, forum.icon),
+                            ),
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(forum.title,
+                                      style: TextStyle(fontSize: 16.0, color: Colors.blue[400], fontWeight: FontWeight.bold)),
+                                  Text(forum.subtitle,
+                                      style: TextStyle(fontSize: 14.0, color: Colors.grey))
+                                ],
+                              ),
+                            )
                           ],
                         ))))
                 .toList(),
