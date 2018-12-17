@@ -4,6 +4,7 @@ import 'package:flutter_punch/models/ThreadListModel.dart';
 import 'package:flutter_punch/models/ThreadModel.dart';
 import 'package:flutter_punch/helpers/API.dart';
 import 'package:flutter_punch/widgets/ThreadListItem.dart';
+import 'package:flutter_punch/screens/thread.dart';
 
 class ForumScreen extends StatefulWidget {
   final ForumsModel forum;
@@ -32,6 +33,10 @@ class _MyAppState extends State<ForumScreen> {
 
   void onTapThread(ThreadModel thread) {
     print(thread.url);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ThreadScreen(thread: thread)),
+    );
   }
 
   @override
@@ -42,7 +47,9 @@ class _MyAppState extends State<ForumScreen> {
       ),
       body: Container(
         child: ListView.separated(
-          separatorBuilder: (BuildContext context, int index) => Divider(height: 1.0,),
+          separatorBuilder: (BuildContext context, int index) => Divider(
+                height: 1.0,
+              ),
           itemCount: threadList.threads.length,
           itemBuilder: (BuildContext context, int index) {
             return ThreadListItem(
