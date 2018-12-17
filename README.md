@@ -1,5 +1,5 @@
-# flutterpunch
-New and fresh Facepunch app, made in flutter,
+# Project Flutter Punch
+New and fresh Facepunch app, made in Flutter,
 
 ![](https://my.mixtape.moe/jnwsbb.jpg)
 
