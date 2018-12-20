@@ -82,17 +82,26 @@ class PostContentTextOptionsModel {
   final String text;
   final PostContentAttributesModel attributes;
   final List<PostContentTextChildModel> children;
+  final dynamic mention;
 
-  PostContentTextOptionsModel({this.text, this.attributes, this.children});
+  PostContentTextOptionsModel(
+      {this.text, this.attributes, this.children, this.mention});
 
   factory PostContentTextOptionsModel.fromJson(Map<String, dynamic> json) {
     var childrenL = json['children'] as List;
-    List<PostContentTextChildModel> childrenList = childrenL.map((i)=> PostContentTextChildModel.fromJson(i)).toList();
+    List<PostContentTextChildModel> childrenList =
+        childrenL.map((i) => PostContentTextChildModel.fromJson(i)).toList();
+
+    print(json);
+
+    var mention;
+    if (json['mention'] != null) mention = json['mention'];
 
     return PostContentTextOptionsModel(
         text: json['text'],
         attributes: PostContentAttributesModel.fromJson(json['attributes']),
-        children: childrenList);
+        children: childrenList,
+        mention: mention);
   }
 }
 
@@ -121,11 +130,10 @@ class PostContentHotlinkOptionsModel {
   PostContentHotlinkOptionsModel({this.url, this.force});
 
   factory PostContentHotlinkOptionsModel.fromJson(Map<String, dynamic> json) {
-    return PostContentHotlinkOptionsModel (
+    return PostContentHotlinkOptionsModel(
         url: json['url'], force: json['force']);
   }
 }
-
 
 /*
  Text child element
@@ -133,15 +141,21 @@ class PostContentHotlinkOptionsModel {
 class PostContentTextChildModel {
   final String text;
   final PostContentAttributesModel attributes;
+  final dynamic mention;
 
-  PostContentTextChildModel({this.text, this.attributes});
+  PostContentTextChildModel({this.text, this.attributes, this.mention});
 
   factory PostContentTextChildModel.fromJson(Map<String, dynamic> json) {
     print('childjson: ${json}');
 
+    var mention;
+    if (json['mention'] != null) mention = json['mention'];
+
     return PostContentTextChildModel(
         text: json['text'],
-        attributes: PostContentAttributesModel.fromJson(json['options']['attributes']));
+        attributes:
+            PostContentAttributesModel.fromJson(json['options']['attributes']),
+        mention: mention);
   }
 }
 
@@ -151,9 +165,15 @@ class PostContentAttributesModel {
   final bool strikethrough;
   final String list;
   final bool isEmote;
+  final bool isMention;
 
   PostContentAttributesModel(
-      {this.bold, this.italic, this.list, this.strikethrough, this.isEmote});
+      {this.bold,
+      this.italic,
+      this.list,
+      this.strikethrough,
+      this.isEmote,
+      this.isMention});
 
   factory PostContentAttributesModel.fromJson(Map<String, dynamic> json) {
     print('Attributes json: ${json}');
@@ -163,6 +183,7 @@ class PostContentAttributesModel {
         bold: json['bold'],
         list: json['list'],
         strikethrough: json['strikethrough'],
-        isEmote: json['isEmote']);
+        isEmote: json['isEmote'],
+        isMention: json['isMention']);
   }
 }
