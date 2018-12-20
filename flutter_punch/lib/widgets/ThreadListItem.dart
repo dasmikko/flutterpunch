@@ -13,6 +13,8 @@ class ThreadListItem extends StatelessWidget {
     return InkWell(
       onTap: () => onTapItem(thread),
       child: Container(
+        decoration:
+            BoxDecoration(color: thread.isSticky ? Colors.green[100] : null),
         padding: EdgeInsets.only(top: 8.0, bottom: 8.0, right: 14.0),
         child: Row(
           children: <Widget>[
