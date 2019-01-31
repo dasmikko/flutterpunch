@@ -74,10 +74,12 @@ class _ThreadScreenState extends State<ThreadScreen> {
                         children: <Widget>[
                           Container(
                             margin: EdgeInsets.only(right: 18.0),
-                            child: Image(
-                              height: 28.0,
-                              image: NetworkImage(post.user.avatar),
-                            ),
+                            child: post.user.avatar != null
+                                ? Image(
+                                    height: 28.0,
+                                    image: NetworkImage(post.user.avatar),
+                                  )
+                                : null,
                           ),
                           Text(post.user.username),
                         ],
