@@ -20,7 +20,11 @@ class ThreadListItem extends StatelessWidget {
           children: <Widget>[
             Container(
               padding: EdgeInsets.all(14.0),
-              child: SvgPicture.network(thread.icon, width: 30),
+              child: SvgPicture(
+                AdvancedNetworkSvg(thread.icon, SvgPicture.svgByteDecoder,
+                    useDiskCache: true),
+                width: 30,
+              ),
             ),
             Expanded(
               child: Column(
