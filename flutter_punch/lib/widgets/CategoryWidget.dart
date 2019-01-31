@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_punch/models/ForumsModel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_advanced_networkimage/provider.dart';
 
 class CategoryWidget extends StatelessWidget {
   final String categoryTitle;
@@ -23,8 +24,8 @@ class CategoryWidget extends StatelessWidget {
         width: 30,
       );
     } else {
-      return SvgPicture.network(
-        icon,
+      return SvgPicture(
+        AdvancedNetworkSvg(icon, SvgPicture.svgByteDecoder, useDiskCache: true),
         width: 30,
       );
     }
