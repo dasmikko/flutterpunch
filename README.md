@@ -1,7 +1,7 @@
 # Project Flutter Punch
 New and fresh Facepunch app, made in Flutter,
 
-![](https://my.mixtape.moe/jnwsbb.jpg)
+![](https://i.imgur.com/e5L6bAn.png)
 
 ## What is planned?
 An Android and iOS version
