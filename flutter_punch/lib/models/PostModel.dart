@@ -126,12 +126,15 @@ class PostContentPostquoteOptionsModel {
 class PostContentHotlinkOptionsModel {
   final String url;
   final String force;
+  final String contentType;
 
-  PostContentHotlinkOptionsModel({this.url, this.force});
+  PostContentHotlinkOptionsModel({this.url, this.force, this.contentType});
 
   factory PostContentHotlinkOptionsModel.fromJson(Map<String, dynamic> json) {
     return PostContentHotlinkOptionsModel(
-        url: json['url'], force: json['force']);
+        url: json['url'], 
+        force: json['force'], 
+        contentType: json['contentType']);
   }
 }
 

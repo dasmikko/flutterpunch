@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_punch/models/PostModel.dart';
+import 'package:flutter_advanced_networkimage/provider.dart';
 
 class PostContentHotlink extends StatelessWidget {
   final PostContentModel postContent;
@@ -10,11 +11,14 @@ class PostContentHotlink extends StatelessWidget {
   Widget build(BuildContext context) {
     PostContentHotlinkOptionsModel options = postContent.options;
 
-    if (options.force != null && options.force == "image") {
+    if (options.force != null &&
+        (options.force == "image" || options.contentType == "image")) {
       return Container(
         child: Column(
           children: <Widget>[
-            Image(image: NetworkImage(options.url),)
+            Image(
+              image: AdvancedNetworkImage(options.url, useDiskCache: true),
+            ),
           ],
         ),
       );
@@ -22,7 +26,7 @@ class PostContentHotlink extends StatelessWidget {
       return Container(
         child: Column(
           children: <Widget>[
-            Text(postContent.type)
+            Text(postContent.type),
           ],
         ),
       );
