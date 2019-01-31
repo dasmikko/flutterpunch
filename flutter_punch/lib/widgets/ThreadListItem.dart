@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_punch/models/ThreadModel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_advanced_networkimage/provider.dart';
 
 class ThreadListItem extends StatelessWidget {
   final ThreadModel thread;
