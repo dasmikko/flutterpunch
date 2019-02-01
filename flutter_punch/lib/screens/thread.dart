@@ -9,6 +9,7 @@ import 'package:flutter_punch/widgets/PostContentHotlink.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:youtube_player/youtube_player.dart';
 
 class ThreadScreen extends StatefulWidget {
   final ThreadModel thread;
@@ -35,18 +36,76 @@ class _ThreadScreenState extends State<ThreadScreen> {
 
   // Handle the different widget types!
   Widget handleWidget(dom.Node node) {
-    print(node.attributeValueSpans['contentType']);
+    print(node.attributes);
 
-    switch (node.attributes['contentType']) {
+    switch (node.attributes['contenttype']) {
       case 'image':
         return Image(
           image:
               AdvancedNetworkImage(node.attributes['url'], useDiskCache: true),
         );
         break;
+      case 'youtube':
+        return Container(
+          child: Column(
+            children: <Widget>[
+              YoutubePlayer(
+                source: node.attributes['url'],
+                quality: YoutubeQuality.HD,
+                aspectRatio: 16 / 9,
+                showThumbnail: true,
+              ),
+            ],
+          ),
+        );
+        break;
+      case 'postquote':
+        return Container(
+          color: Colors.blue,
+          child: Column(
+            children: <Widget>[Text('PostQuote'), Text(node.text)],
+          ),
+        );
+        break;
       default:
-        return Text('unknown hotlink');
+        return Text('unknown type');
     }
+  }
+
+  Widget handlePostquote(dom.Node node) {
+    return Row(children: [
+      Expanded(
+        child: Container(
+          color: Colors.blue,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  node.attributes['username'] + " posted:",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(12.0),
+                      color: Colors.white24,
+                      child: Text(
+                        node.text,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      )
+    ]);
   }
 
   @override
@@ -94,6 +153,10 @@ class _ThreadScreenState extends State<ThreadScreen> {
                           switch (node.localName) {
                             case "hotlink":
                               return handleWidget(node);
+                              break;
+                            case "postquote":
+                              return handlePostquote(node);
+                              break;
                           }
                         }
                       },

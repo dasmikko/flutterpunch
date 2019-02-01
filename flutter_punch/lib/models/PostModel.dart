@@ -93,8 +93,6 @@ class PostContentTextOptionsModel {
     List<PostContentTextChildModel> childrenList =
         childrenL.map((i) => PostContentTextChildModel.fromJson(i)).toList();
 
-    print(json);
-
     var mention;
     if (json['mention'] != null) mention = json['mention'];
 
@@ -150,7 +148,6 @@ class PostContentTextChildModel {
   PostContentTextChildModel({this.text, this.attributes, this.mention});
 
   factory PostContentTextChildModel.fromJson(Map<String, dynamic> json) {
-    print('childjson: ${json}');
 
     var mention;
     if (json['mention'] != null) mention = json['mention'];
@@ -180,8 +177,6 @@ class PostContentAttributesModel {
       this.isMention});
 
   factory PostContentAttributesModel.fromJson(Map<String, dynamic> json) {
-    print('Attributes json: ${json}');
-
     return PostContentAttributesModel(
         italic: json['italic'],
         bold: json['bold'],
