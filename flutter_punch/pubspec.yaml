@@ -26,6 +26,7 @@ dependencies:
   real_rich_text:
     git:
       url: git://github.com/bytedance/RealRichText.git
+  youtube_player: ^0.8.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
