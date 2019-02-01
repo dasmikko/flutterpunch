@@ -6,6 +6,9 @@ import 'package:flutter_punch/models/PostModel.dart';
 import 'package:flutter_punch/widgets/PostContentText.dart';
 import 'package:flutter_punch/widgets/PostContentPostQuote.dart';
 import 'package:flutter_punch/widgets/PostContentHotlink.dart';
+import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:html/dom.dart' as dom;
 
 class ThreadScreen extends StatefulWidget {
   final ThreadModel thread;
@@ -24,7 +27,6 @@ class _ThreadScreenState extends State<ThreadScreen> {
     super.initState();
 
     APIHelper().fetchThread(widget.thread.url).then((data) {
-      print(data.threadName);
       setState(() {
         postList = data;
       });
@@ -32,19 +34,18 @@ class _ThreadScreenState extends State<ThreadScreen> {
   }
 
   // Handle the different widget types!
-  Widget handleWidget(PostContentModel postContent) {
-    switch (postContent.type) {
-      case 'text':
-        return PostContentText(postContent: postContent);
-        break;
-      case 'postquote':
-        return PostContentPostqote(
-          postContent: postContent,
+  Widget handleWidget(dom.Node node) {
+    print(node.attributeValueSpans['contentType']);
+
+    switch (node.attributes['contentType']) {
+      case 'image':
+        return Image(
+          image:
+              AdvancedNetworkImage(node.attributes['url'], useDiskCache: true),
         );
-      case 'hotlink':
-        return PostContentHotlink(postContent: postContent);
+        break;
       default:
-        return Text(postContent.type);
+        return Text('unknown hotlink');
     }
   }
 
@@ -86,10 +87,16 @@ class _ThreadScreenState extends State<ThreadScreen> {
                       )),
                   Container(
                     padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Column(
-                      children: post.content
-                          .map((item) => Container(child: handleWidget(item)))
-                          .toList(),
+                    child: Html(
+                      data: post.contentAsHtml,
+                      customRender: (node, children) {
+                        if (node is dom.Element) {
+                          switch (node.localName) {
+                            case "hotlink":
+                              return handleWidget(node);
+                          }
+                        }
+                      },
                     ),
                   )
                 ],

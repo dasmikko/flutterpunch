@@ -1,8 +1,9 @@
 class PostModel {
   final UserModel user;
   final List<PostContentModel> content;
+  final String contentAsHtml;
 
-  PostModel({this.user, this.content});
+  PostModel({this.user, this.content, this.contentAsHtml});
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
     var contentList = json['contentParsed'] as List;
@@ -10,7 +11,7 @@ class PostModel {
     List<PostContentModel> content =
         contentList.map((i) => PostContentModel.fromJson(i)).toList();
 
-    return PostModel(user: UserModel.fromJson(json['user']), content: content);
+    return PostModel(user: UserModel.fromJson(json['user']), content: content, contentAsHtml: json['contentAsHtml']);
   }
 }
 

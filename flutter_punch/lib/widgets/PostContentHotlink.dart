@@ -32,7 +32,6 @@ class PostContentHotlink extends StatelessWidget {
               quality: YoutubeQuality.HD,
               aspectRatio: 16 / 9,
               showThumbnail: true,
-              autoInitialize: false,
             ),
           ],
         ),
