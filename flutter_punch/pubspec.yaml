@@ -26,7 +26,7 @@ dependencies:
   real_rich_text:
     git:
       url: git://github.com/bytedance/RealRichText.git
-  youtube_player: ^0.8.1
+  youtube_player: ^1.0.1
   flutter_html: ^0.9.3
 
   # The following adds the Cupertino Icons font to your application.
