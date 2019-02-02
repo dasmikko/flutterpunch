@@ -22,15 +22,46 @@ class ThreadScreen extends StatefulWidget {
 
 class _ThreadScreenState extends State<ThreadScreen> {
   PostListModel postList = new PostListModel(posts: new List<PostModel>());
+  ScrollController _scrollController = new ScrollController();
+  int pageNumber = 1;
 
   @override
   void initState() {
     super.initState();
 
-    APIHelper().fetchThread(widget.thread.url).then((data) {
+    String urlWithCurrentPageNumber =
+        widget.thread.url.replaceAll('/1/', '/' + pageNumber.toString() + '/');
+
+    APIHelper().fetchThread(urlWithCurrentPageNumber).then((data) {
       setState(() {
         postList = data;
       });
+    });
+  }
+
+  void changePage(int number) {
+    print(number.toString().length);
+
+    int oldNumber = pageNumber;
+
+    print(widget.thread.url);
+
+    String urlWithCurrentPageNumber = widget.thread.url;
+    urlWithCurrentPageNumber = urlWithCurrentPageNumber.substring(
+        0, urlWithCurrentPageNumber.length - (number.toString().length + 2));
+
+    urlWithCurrentPageNumber =
+        urlWithCurrentPageNumber + "/" + number.toString() + "/";
+
+    print(urlWithCurrentPageNumber);
+
+    APIHelper().fetchThread(urlWithCurrentPageNumber).then((data) {
+      setState(() {
+        pageNumber = number;
+        postList = data;
+      });
+
+      _scrollController.jumpTo(0.0);
     });
   }
 
@@ -54,6 +85,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
                 quality: YoutubeQuality.HD,
                 aspectRatio: 16 / 9,
                 showThumbnail: true,
+                autoPlay: false,
               ),
             ],
           ),
@@ -76,7 +108,10 @@ class _ThreadScreenState extends State<ThreadScreen> {
     return Row(children: [
       Expanded(
         child: Container(
-          color: Colors.blue,
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            border: Border.all(color: Colors.blue, width: 2.0),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -95,7 +130,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
                       color: Colors.white24,
                       child: Text(
                         node.text,
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: Colors.grey[800]),
                       ),
                     ),
                   ),
@@ -114,8 +149,36 @@ class _ThreadScreenState extends State<ThreadScreen> {
       appBar: AppBar(
         title: Text(widget.thread.title),
       ),
+      bottomNavigationBar: BottomAppBar(
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: pageNumber != 1 ? () {
+                if (pageNumber != 1) {
+                  changePage(pageNumber - 1);
+                }
+              } : null,
+            ),
+            Text(pageNumber.toString() +
+                " of " +
+                postList.totalPages.toString()),
+            IconButton(
+              icon: Icon(Icons.arrow_forward),
+              onPressed: pageNumber != postList.totalPages ? () {
+                if (pageNumber < postList.totalPages) {
+                  changePage(pageNumber + 1);
+                }
+              } : null,
+            ),
+          ],
+        ),
+      ),
       body: Container(
         child: ListView.builder(
+          controller: _scrollController,
           itemCount: postList.posts.length,
           itemBuilder: (context, index) {
             var post = postList.posts[index];
@@ -127,9 +190,36 @@ class _ThreadScreenState extends State<ThreadScreen> {
                 children: <Widget>[
                   Container(
                       // Post header
-                      color: Colors.blueGrey[50],
-                      padding: EdgeInsets.all(18.0),
+                      padding: EdgeInsets.only(
+                        left: 14.0,
+                        right: 14.0,
+                        top: 8.0,
+                        bottom: 8.0,
+                      ),
                       margin: EdgeInsets.only(bottom: 8.0),
+                      decoration: post.user.backgroundImage != null
+                          ? BoxDecoration(
+                              border: BorderDirectional(
+                                top: BorderSide(color: Colors.grey),
+                                bottom: BorderSide(color: Colors.grey),
+                              ),
+                              image: DecorationImage(
+                                image: AdvancedNetworkImage(
+                                  post.user.backgroundImage,
+                                ),
+                                fit: BoxFit.cover,
+                                colorFilter: new ColorFilter.mode(
+                                    Colors.black.withOpacity(0.2),
+                                    BlendMode.dstATop),
+                              ),
+                            )
+                          : BoxDecoration(
+                              color: Colors.blueGrey[50],
+                              border: BorderDirectional(
+                                top: BorderSide(color: Colors.grey),
+                                bottom: BorderSide(color: Colors.grey),
+                              ),
+                            ),
                       child: Row(
                         children: <Widget>[
                           Container(

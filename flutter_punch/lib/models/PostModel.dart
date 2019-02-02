@@ -1,17 +1,13 @@
 class PostModel {
   final UserModel user;
-  final List<PostContentModel> content;
   final String contentAsHtml;
 
-  PostModel({this.user, this.content, this.contentAsHtml});
+  PostModel({this.user, this.contentAsHtml});
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
-    var contentList = json['contentParsed'] as List;
-
-    List<PostContentModel> content =
-        contentList.map((i) => PostContentModel.fromJson(i)).toList();
-
-    return PostModel(user: UserModel.fromJson(json['user']), content: content, contentAsHtml: json['contentAsHtml']);
+    return PostModel(
+        user: UserModel.fromJson(json['user']),
+        contentAsHtml: json['contentAsHtml']);
   }
 }
 
@@ -131,8 +127,8 @@ class PostContentHotlinkOptionsModel {
 
   factory PostContentHotlinkOptionsModel.fromJson(Map<String, dynamic> json) {
     return PostContentHotlinkOptionsModel(
-        url: json['url'], 
-        force: json['force'], 
+        url: json['url'],
+        force: json['force'],
         contentType: json['contentType']);
   }
 }
@@ -148,7 +144,6 @@ class PostContentTextChildModel {
   PostContentTextChildModel({this.text, this.attributes, this.mention});
 
   factory PostContentTextChildModel.fromJson(Map<String, dynamic> json) {
-
     var mention;
     if (json['mention'] != null) mention = json['mention'];
 
