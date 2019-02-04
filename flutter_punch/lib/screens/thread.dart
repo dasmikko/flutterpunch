@@ -10,6 +10,11 @@ import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:youtube_player/youtube_player.dart';
+import 'package:flutter_punch/screens/imageViewer.dart';
+import 'package:universal_widget/universal_widget.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_punch/scopedModels/PostListSM.dart';
+import 'package:flutter_punch/widgets/FullScreenLoadingWidget.dart';
 
 class ThreadScreen extends StatefulWidget {
   final ThreadModel thread;
@@ -23,6 +28,7 @@ class ThreadScreen extends StatefulWidget {
 class _ThreadScreenState extends State<ThreadScreen> {
   PostListModel postList = new PostListModel(posts: new List<PostModel>());
   ScrollController _scrollController = new ScrollController();
+  PostListSM _model = PostListSM();
   int pageNumber = 1;
 
   @override
@@ -32,17 +38,21 @@ class _ThreadScreenState extends State<ThreadScreen> {
     String urlWithCurrentPageNumber =
         widget.thread.url.replaceAll('/1/', '/' + pageNumber.toString() + '/');
 
-    APIHelper().fetchThread(urlWithCurrentPageNumber).then((data) {
-      setState(() {
-        postList = data;
-      });
+    _model.updateLoadingState(true);
+    _model.getPosts(urlWithCurrentPageNumber).then((onValue) {
+      _model.updateLoadingState(false);
+
+      if (_model.posts.totalPages > 1) {
+        UniversalWidget.find("paginator")
+            .update(duration: 0.5, height: 50.0, opacity: 1);
+      }
     });
   }
 
   void changePage(int number) {
     print(number.toString().length);
 
-    int oldNumber = pageNumber;
+    int oldNumber = _model.pageNumber;
 
     print(widget.thread.url);
 
@@ -55,11 +65,8 @@ class _ThreadScreenState extends State<ThreadScreen> {
 
     print(urlWithCurrentPageNumber);
 
-    APIHelper().fetchThread(urlWithCurrentPageNumber).then((data) {
-      setState(() {
-        pageNumber = number;
-        postList = data;
-      });
+    _model.getPosts(urlWithCurrentPageNumber).then((nothing) {
+      _model.updatePageNumber(number);
 
       _scrollController.jumpTo(0.0);
     });
@@ -71,9 +78,22 @@ class _ThreadScreenState extends State<ThreadScreen> {
 
     switch (node.attributes['contenttype']) {
       case 'image':
-        return Image(
-          image:
-              AdvancedNetworkImage(node.attributes['url'], useDiskCache: true),
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ImageViewerScreen(url: node.attributes['url'])),
+            );
+          },
+          child: Hero(
+            tag: node.attributes['url'],
+            child: Image(
+              image: AdvancedNetworkImage(node.attributes['url'],
+                  useDiskCache: true),
+            ),
+          ),
         );
         break;
       case 'youtube':
@@ -91,14 +111,6 @@ class _ThreadScreenState extends State<ThreadScreen> {
           ),
         );
         break;
-      case 'postquote':
-        return Container(
-          color: Colors.blue,
-          child: Column(
-            children: <Widget>[Text('PostQuote'), Text(node.text)],
-          ),
-        );
-        break;
       default:
         return Text('unknown type');
     }
@@ -108,6 +120,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
     return Row(children: [
       Expanded(
         child: Container(
+          margin: EdgeInsets.only(bottom: 12.0),
           decoration: BoxDecoration(
             color: Colors.blue,
             border: Border.all(color: Colors.blue, width: 2.0),
@@ -143,119 +156,163 @@ class _ThreadScreenState extends State<ThreadScreen> {
     ]);
   }
 
+  Widget loadingContent(model) {
+    return FullScreenLoadingWidget();
+  }
+
+  Widget content(model) {
+    return ListView.builder(
+      controller: _scrollController,
+      itemCount: model.posts.posts.length,
+      itemBuilder: (context, index) {
+        var post = model.posts.posts[index];
+
+        return Container(
+          margin: EdgeInsets.only(bottom: 10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                  // Post header
+                  padding: EdgeInsets.only(
+                    left: 14.0,
+                    right: 14.0,
+                    top: 8.0,
+                    bottom: 8.0,
+                  ),
+                  margin: EdgeInsets.only(bottom: 8.0),
+                  decoration: post.user.backgroundImage != null
+                      ? BoxDecoration(
+                          border: BorderDirectional(
+                            top: BorderSide(color: Colors.grey),
+                            bottom: BorderSide(color: Colors.grey),
+                          ),
+                          image: DecorationImage(
+                            image: AdvancedNetworkImage(
+                              post.user.backgroundImage,
+                            ),
+                            fit: BoxFit.cover,
+                            colorFilter: new ColorFilter.mode(
+                                Colors.black.withOpacity(0.2),
+                                BlendMode.dstATop),
+                          ),
+                        )
+                      : BoxDecoration(
+                          color: Colors.blueGrey[50],
+                          border: BorderDirectional(
+                            top: BorderSide(color: Colors.grey),
+                            bottom: BorderSide(color: Colors.grey),
+                          ),
+                        ),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(right: 18.0),
+                        child: post.user.avatar != null
+                            ? Image(
+                                height: 28.0,
+                                image: NetworkImage(post.user.avatar),
+                              )
+                            : null,
+                      ),
+                      Text(post.user.username),
+                    ],
+                  )),
+              Container(
+                padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                child: Html(
+                  data: post.contentAsHtml,
+                  customRender: (node, children) {
+                    if (node is dom.Element) {
+                      switch (node.localName) {
+                        case "hotlink":
+                          return handleWidget(node);
+                          break;
+                        case "postquote":
+                          return handlePostquote(node);
+                          break;
+                      }
+                    }
+                  },
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.thread.title),
       ),
-      bottomNavigationBar: BottomAppBar(
-        child: new Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: pageNumber != 1 ? () {
-                if (pageNumber != 1) {
-                  changePage(pageNumber - 1);
-                }
-              } : null,
-            ),
-            Text(pageNumber.toString() +
-                " of " +
-                postList.totalPages.toString()),
-            IconButton(
-              icon: Icon(Icons.arrow_forward),
-              onPressed: pageNumber != postList.totalPages ? () {
-                if (pageNumber < postList.totalPages) {
-                  changePage(pageNumber + 1);
-                }
-              } : null,
-            ),
-          ],
-        ),
-      ),
-      body: Container(
-        child: ListView.builder(
-          controller: _scrollController,
-          itemCount: postList.posts.length,
-          itemBuilder: (context, index) {
-            var post = postList.posts[index];
-
-            return Container(
-              margin: EdgeInsets.only(bottom: 10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      bottomNavigationBar: UniversalWidget(
+        name: "paginator",
+        height: _model.posts.posts.length > 0 && _model.posts.totalPages > 1
+            ? 50.0
+            : 0.0,
+        opacity: _model.posts.posts.length > 0 && _model.posts.totalPages > 1
+            ? 1
+            : 0.0,
+        visible: true,
+        child: ScopedModel<PostListSM>(
+          model: _model,
+          child: new ScopedModelDescendant<PostListSM>(
+              builder: (context, child, model) {
+            return BottomAppBar(
+              child: new Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Container(
-                      // Post header
-                      padding: EdgeInsets.only(
-                        left: 14.0,
-                        right: 14.0,
-                        top: 8.0,
-                        bottom: 8.0,
-                      ),
-                      margin: EdgeInsets.only(bottom: 8.0),
-                      decoration: post.user.backgroundImage != null
-                          ? BoxDecoration(
-                              border: BorderDirectional(
-                                top: BorderSide(color: Colors.grey),
-                                bottom: BorderSide(color: Colors.grey),
-                              ),
-                              image: DecorationImage(
-                                image: AdvancedNetworkImage(
-                                  post.user.backgroundImage,
-                                ),
-                                fit: BoxFit.cover,
-                                colorFilter: new ColorFilter.mode(
-                                    Colors.black.withOpacity(0.2),
-                                    BlendMode.dstATop),
-                              ),
-                            )
-                          : BoxDecoration(
-                              color: Colors.blueGrey[50],
-                              border: BorderDirectional(
-                                top: BorderSide(color: Colors.grey),
-                                bottom: BorderSide(color: Colors.grey),
-                              ),
-                            ),
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(right: 18.0),
-                            child: post.user.avatar != null
-                                ? Image(
-                                    height: 28.0,
-                                    image: NetworkImage(post.user.avatar),
-                                  )
-                                : null,
-                          ),
-                          Text(post.user.username),
-                        ],
-                      )),
-                  Container(
-                    padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Html(
-                      data: post.contentAsHtml,
-                      customRender: (node, children) {
-                        if (node is dom.Element) {
-                          switch (node.localName) {
-                            case "hotlink":
-                              return handleWidget(node);
-                              break;
-                            case "postquote":
-                              return handlePostquote(node);
-                              break;
+                  IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: model.pageNumber != 1
+                        ? () {
+                            if (model.pageNumber != 1) {
+                              changePage(model.pageNumber - 1);
+                            }
                           }
-                        }
-                      },
-                    ),
-                  )
+                        : null,
+                  ),
+                  Text("Page " + model.pageNumber.toString() +
+                      " of " +
+                      model.posts.totalPages.toString()),
+                  IconButton(
+                    icon: Icon(Icons.arrow_forward),
+                    onPressed: model.pageNumber != model.posts.totalPages
+                        ? () {
+                            if (model.pageNumber < model.posts.totalPages) {
+                              changePage(model.pageNumber + 1);
+                            }
+                          }
+                        : null,
+                  ),
                 ],
               ),
             );
-          },
+          }),
+        ),
+      ),
+      body: Container(
+        child: ScopedModel<PostListSM>(
+          model: _model,
+          child: new ScopedModelDescendant<PostListSM>(
+            builder: (context, child, model) {
+              return AnimatedCrossFade(
+                  duration: Duration(milliseconds: 300),
+                  firstCurve: Curves.ease,
+                  secondCurve: Curves.ease,
+                  crossFadeState: model.isLoading
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  firstChild: loadingContent(model),
+                  secondChild: content(model),
+                );
+            },
+          ),
         ),
       ),
     );

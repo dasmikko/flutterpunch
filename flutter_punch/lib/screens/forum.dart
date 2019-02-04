@@ -5,6 +5,9 @@ import 'package:flutter_punch/models/ThreadModel.dart';
 import 'package:flutter_punch/helpers/API.dart';
 import 'package:flutter_punch/widgets/ThreadListItem.dart';
 import 'package:flutter_punch/screens/thread.dart';
+import 'package:flutter_punch/scopedModels/ForumModel.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_punch/widgets/FullScreenLoadingWidget.dart';
 
 class ForumScreen extends StatefulWidget {
   final ForumsModel forum;
@@ -18,16 +21,15 @@ class ForumScreen extends StatefulWidget {
 class _MyAppState extends State<ForumScreen> {
   ThreadListModel threadList =
       new ThreadListModel(threads: new List<ThreadModel>());
+  ForumModelScoped _model = ForumModelScoped();
 
   @override
   void initState() {
     super.initState();
 
-    APIHelper().fetchForum(widget.forum.id).then((data) {
-      print(data.threads[0].title);
-      setState(() {
-        threadList = data;
-      });
+    _model.updateLoadingState(true);
+    _model.getForum(widget.forum.id).then((val) {
+      _model.updateLoadingState(false);
     });
   }
 
@@ -39,26 +41,51 @@ class _MyAppState extends State<ForumScreen> {
     );
   }
 
+  Widget loadingContent(model) {
+    return FullScreenLoadingWidget();
+  }
+
+  Widget content(model) {
+    return Container(
+      child: ListView.separated(
+        separatorBuilder: (BuildContext context, int index) => Divider(
+              height: 1.0,
+            ),
+        itemCount: model.thread.threads.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ThreadListItem(
+            thread: model.thread.threads[index],
+            onTapItem: onTapThread,
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.forum.title),
-      ),
-      body: Container(
-        child: ListView.separated(
-          separatorBuilder: (BuildContext context, int index) => Divider(
-                height: 1.0,
-              ),
-          itemCount: threadList.threads.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ThreadListItem(
-              thread: threadList.threads[index],
-              onTapItem: onTapThread,
-            );
-          },
+        appBar: AppBar(
+          title: Text(widget.forum.title),
         ),
-      ),
-    );
+        body: Container(
+          child: ScopedModel<ForumModelScoped>(
+            model: _model,
+            child: new ScopedModelDescendant<ForumModelScoped>(
+              builder: (context, child, model) {
+                return AnimatedCrossFade(
+                  duration: Duration(milliseconds: 300),
+                  firstCurve: Curves.ease,
+                  secondCurve: Curves.ease,
+                  crossFadeState: model.isLoading
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  firstChild: loadingContent(model),
+                  secondChild: content(model),
+                );
+              },
+            ),
+          ),
+        ));
   }
 }

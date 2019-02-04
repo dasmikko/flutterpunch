@@ -37,7 +37,7 @@ class ThreadListItem extends StatelessWidget {
                       thread.title,
                       style: TextStyle(
                           fontSize: 14.0,
-                          color: Colors.blue[400],
+                          color: thread.isSticky ? Colors.green[500] : Colors.blue[400],
                           fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -45,7 +45,7 @@ class ThreadListItem extends StatelessWidget {
                     thread.creator.username,
                     style: TextStyle(
                         fontSize: 12.0,
-                        color: Colors.blue[800],
+                        color: thread.isSticky ? Colors.green[800] : Colors.blue[800],
                         fontWeight: FontWeight.bold),
                   ),
                 ],

@@ -4,9 +4,11 @@ import 'package:flutter_punch/models/CategoryListModel.dart';
 import 'package:flutter_punch/models/CategoryModel.dart';
 import 'package:flutter_punch/models/ForumsModel.dart';
 import 'package:flutter_punch/widgets/CategoryWidget.dart';
-import 'dart:convert';
 import 'package:flutter_punch/screens/forum.dart';
 import 'package:flutter_punch/helpers/API.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_punch/scopedModels/CategoryModel.dart';
+import 'package:flutter_punch/widgets/FullScreenLoadingWidget.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -36,25 +38,61 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   CategoryListModel categoryList =
       new CategoryListModel(categories: new List<CategoryModel>());
+  CategoryModelScoped _categoryModelScoped = CategoryModelScoped();
 
   @override
   void initState() {
     super.initState();
 
-    APIHelper().fetchCategories().then((data) {
-      print(data.categories[0].categoryName);
-      setState(() {
-        categoryList = data;
-      });
+    // Fetch the categories
+    _categoryModelScoped.updateLoadingState(true);
+    _categoryModelScoped.getCategories().then((nothing) {
+      _categoryModelScoped.updateLoadingState(false);
     });
   }
 
-  void _incrementCounter() {
-    APIHelper().fetchCategories().then((data) {
-      setState(() {
-        categoryList = data;
-      });
+  void _reload() {
+    // Fetch the categories
+    _categoryModelScoped.updateLoadingState(true);
+    _categoryModelScoped.getCategories().then((nothing) {
+      _categoryModelScoped.updateLoadingState(false);
     });
+  }
+
+  Widget loadingContent(model) {
+    return FullScreenLoadingWidget();
+  }
+
+  Widget content(model) {
+    return Container(
+      alignment: Alignment.center,
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: _categoryModelScoped.categories.categories.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                CategoryWidget(
+                  categoryTitle: _categoryModelScoped
+                      .categories.categories[index].categoryName,
+                  forums:
+                      _categoryModelScoped.categories.categories[index].forums,
+                  onForumTap: (ForumsModel forum) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ForumScreen(forum: forum)),
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -74,34 +112,26 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: ListView.builder(
-          itemCount: categoryList.categories.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  CategoryWidget(
-                    categoryTitle: categoryList.categories[index].categoryName,
-                    forums: categoryList.categories[index].forums,
-                    onForumTap: (ForumsModel forum) {
-                      print('Clicked forum ${forum.title}');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ForumScreen(forum: forum)),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            );
-          },
+        child: ScopedModel<CategoryModelScoped>(
+          model: _categoryModelScoped,
+          child: new ScopedModelDescendant<CategoryModelScoped>(
+              builder: (context, child, model) {
+            return AnimatedCrossFade(
+                duration: Duration(milliseconds: 300),
+                firstCurve: Curves.ease,
+                secondCurve: Curves.ease,
+                crossFadeState: model.isLoading
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+                firstChild: loadingContent(model),
+                secondChild: content(model));
+          }),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _reload,
         tooltip: 'Increment',
-        child: Icon(Icons.add),
+        child: Icon(Icons.refresh),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
