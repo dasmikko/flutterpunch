@@ -15,6 +15,7 @@ import 'package:universal_widget/universal_widget.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_punch/scopedModels/PostListSM.dart';
 import 'package:flutter_punch/widgets/FullScreenLoadingWidget.dart';
+import 'package:flutter_punch/widgets/FPDrawerWidget.dart';
 
 class ThreadScreen extends StatefulWidget {
   final ThreadModel thread;
@@ -65,8 +66,10 @@ class _ThreadScreenState extends State<ThreadScreen> {
 
     print(urlWithCurrentPageNumber);
 
+    _model.updateLoadingState(true);
     _model.getPosts(urlWithCurrentPageNumber).then((nothing) {
       _model.updatePageNumber(number);
+      _model.updateLoadingState(false);
 
       _scrollController.jumpTo(0.0);
     });
@@ -162,6 +165,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
 
   Widget content(model) {
     return ListView.builder(
+      shrinkWrap: true,
       controller: _scrollController,
       itemCount: model.posts.posts.length,
       itemBuilder: (context, index) {
@@ -173,51 +177,51 @@ class _ThreadScreenState extends State<ThreadScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
-                  // Post header
-                  padding: EdgeInsets.only(
-                    left: 14.0,
-                    right: 14.0,
-                    top: 8.0,
-                    bottom: 8.0,
-                  ),
-                  margin: EdgeInsets.only(bottom: 8.0),
-                  decoration: post.user.backgroundImage != null
-                      ? BoxDecoration(
-                          border: BorderDirectional(
-                            top: BorderSide(color: Colors.grey),
-                            bottom: BorderSide(color: Colors.grey),
-                          ),
-                          image: DecorationImage(
-                            image: AdvancedNetworkImage(
-                              post.user.backgroundImage,
-                            ),
-                            fit: BoxFit.cover,
-                            colorFilter: new ColorFilter.mode(
-                                Colors.black.withOpacity(0.2),
-                                BlendMode.dstATop),
-                          ),
-                        )
-                      : BoxDecoration(
-                          color: Colors.blueGrey[50],
-                          border: BorderDirectional(
-                            top: BorderSide(color: Colors.grey),
-                            bottom: BorderSide(color: Colors.grey),
-                          ),
+                // Post header
+                padding: EdgeInsets.only(
+                  left: 14.0,
+                  right: 14.0,
+                  top: 8.0,
+                  bottom: 8.0,
+                ),
+                margin: EdgeInsets.only(bottom: 8.0),
+                decoration: post.user.backgroundImage != null
+                    ? BoxDecoration(
+                        border: BorderDirectional(
+                          top: BorderSide(color: Colors.grey),
+                          bottom: BorderSide(color: Colors.grey),
                         ),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(right: 18.0),
-                        child: post.user.avatar != null
-                            ? Image(
-                                height: 28.0,
-                                image: NetworkImage(post.user.avatar),
-                              )
-                            : null,
+                        image: DecorationImage(
+                          image: AdvancedNetworkImage(
+                            post.user.backgroundImage,
+                          ),
+                          fit: BoxFit.cover,
+                          colorFilter: new ColorFilter.mode(
+                              Colors.black.withOpacity(0.2), BlendMode.dstATop),
+                        ),
+                      )
+                    : BoxDecoration(
+                        color: Colors.blueGrey[50],
+                        border: BorderDirectional(
+                          top: BorderSide(color: Colors.grey),
+                          bottom: BorderSide(color: Colors.grey),
+                        ),
                       ),
-                      Text(post.user.username),
-                    ],
-                  )),
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(right: 18.0),
+                      child: post.user.avatar != null
+                          ? Image(
+                              height: 28.0,
+                              image: NetworkImage(post.user.avatar),
+                            )
+                          : null,
+                    ),
+                    Text(post.user.username),
+                  ],
+                ),
+              ),
               Container(
                 padding: EdgeInsets.only(left: 8.0, right: 8.0),
                 child: Html(
@@ -277,7 +281,8 @@ class _ThreadScreenState extends State<ThreadScreen> {
                           }
                         : null,
                   ),
-                  Text("Page " + model.pageNumber.toString() +
+                  Text("Page " +
+                      model.pageNumber.toString() +
                       " of " +
                       model.posts.totalPages.toString()),
                   IconButton(
@@ -302,19 +307,20 @@ class _ThreadScreenState extends State<ThreadScreen> {
           child: new ScopedModelDescendant<PostListSM>(
             builder: (context, child, model) {
               return AnimatedCrossFade(
-                  duration: Duration(milliseconds: 300),
-                  firstCurve: Curves.ease,
-                  secondCurve: Curves.ease,
-                  crossFadeState: model.isLoading
-                      ? CrossFadeState.showFirst
-                      : CrossFadeState.showSecond,
-                  firstChild: loadingContent(model),
-                  secondChild: content(model),
-                );
+                duration: Duration(milliseconds: 300),
+                firstCurve: Curves.ease,
+                secondCurve: Curves.ease,
+                crossFadeState: model.isLoading
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+                firstChild: loadingContent(model),
+                secondChild: content(model),
+              );
             },
           ),
         ),
       ),
+      drawer: FPDrawerWidget(),
     );
   }
 }

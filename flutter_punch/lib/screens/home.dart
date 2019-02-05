@@ -9,6 +9,7 @@ import 'package:flutter_punch/helpers/API.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_punch/scopedModels/CategoryModel.dart';
 import 'package:flutter_punch/widgets/FullScreenLoadingWidget.dart';
+import 'package:flutter_punch/widgets/FPDrawerWidget.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -128,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
           }),
         ),
       ),
+      drawer: FPDrawerWidget(),
       floatingActionButton: FloatingActionButton(
         onPressed: _reload,
         tooltip: 'Increment',

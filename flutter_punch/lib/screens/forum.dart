@@ -8,6 +8,7 @@ import 'package:flutter_punch/screens/thread.dart';
 import 'package:flutter_punch/scopedModels/ForumModel.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_punch/widgets/FullScreenLoadingWidget.dart';
+import 'package:flutter_punch/widgets/FPDrawerWidget.dart';
 
 class ForumScreen extends StatefulWidget {
   final ForumsModel forum;
@@ -48,6 +49,7 @@ class _MyAppState extends State<ForumScreen> {
   Widget content(model) {
     return Container(
       child: ListView.separated(
+        shrinkWrap: true,
         separatorBuilder: (BuildContext context, int index) => Divider(
               height: 1.0,
             ),
@@ -65,27 +67,29 @@ class _MyAppState extends State<ForumScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.forum.title),
-        ),
-        body: Container(
-          child: ScopedModel<ForumModelScoped>(
-            model: _model,
-            child: new ScopedModelDescendant<ForumModelScoped>(
-              builder: (context, child, model) {
-                return AnimatedCrossFade(
-                  duration: Duration(milliseconds: 300),
-                  firstCurve: Curves.ease,
-                  secondCurve: Curves.ease,
-                  crossFadeState: model.isLoading
-                      ? CrossFadeState.showFirst
-                      : CrossFadeState.showSecond,
-                  firstChild: loadingContent(model),
-                  secondChild: content(model),
-                );
-              },
-            ),
+      appBar: AppBar(
+        title: Text(widget.forum.title),
+      ),
+      body: Container(
+        child: ScopedModel<ForumModelScoped>(
+          model: _model,
+          child: new ScopedModelDescendant<ForumModelScoped>(
+            builder: (context, child, model) {
+              return AnimatedCrossFade(
+                duration: Duration(milliseconds: 300),
+                firstCurve: Curves.ease,
+                secondCurve: Curves.ease,
+                crossFadeState: model.isLoading
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+                firstChild: loadingContent(model),
+                secondChild: content(model),
+              );
+            },
           ),
-        ));
+        ),
+      ),
+      drawer: FPDrawerWidget(),
+    );
   }
 }
