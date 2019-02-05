@@ -3,9 +3,6 @@ import 'package:flutter_punch/helpers/API.dart';
 import 'package:flutter_punch/models/ThreadModel.dart';
 import 'package:flutter_punch/models/PostListModel.dart';
 import 'package:flutter_punch/models/PostModel.dart';
-import 'package:flutter_punch/widgets/PostContentText.dart';
-import 'package:flutter_punch/widgets/PostContentPostQuote.dart';
-import 'package:flutter_punch/widgets/PostContentHotlink.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
@@ -16,6 +13,8 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_punch/scopedModels/PostListSM.dart';
 import 'package:flutter_punch/widgets/FullScreenLoadingWidget.dart';
 import 'package:flutter_punch/widgets/FPDrawerWidget.dart';
+import 'package:flutter_punch/helpers/Ratings.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ThreadScreen extends StatefulWidget {
   final ThreadModel thread;
@@ -239,12 +238,65 @@ class _ThreadScreenState extends State<ThreadScreen> {
                     }
                   },
                 ),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 8.0, right: 8.0),
+                child: postFooter(post),
               )
             ],
           ),
         );
       },
     );
+  }
+
+  Widget postFooter(PostModel post) {
+    print(post.meta.votes);
+
+    List<Widget> voteWidgets = new List();
+
+    if (post.meta.votes != null && post.meta.votes.length > 0) {
+      for (var vote in post.meta.votes.keys) {
+        Rating rating = RatingsHelper()
+            .RatingsList
+            .where((i) => i.id == int.parse(vote))
+            .first;
+
+        if (rating.icon.contains(".svg")) {
+          voteWidgets.add(
+            Container(
+              margin: EdgeInsets.only(right: 8.0),
+              child: Column(
+                children: <Widget>[
+                  SvgPicture(
+                      AdvancedNetworkSvg(rating.icon, SvgPicture.svgByteDecoder,
+                          useDiskCache: true),
+                      width: 30),
+                  Text(post.meta.votes[vote].toString())
+                ],
+              ),
+            ),
+          );
+        } else {
+          voteWidgets.add(
+            Container(
+              margin: EdgeInsets.only(right: 8.0),
+              child: Column(
+                children: <Widget>[
+                  Image(
+                      image:
+                          AdvancedNetworkImage(rating.icon, useDiskCache: true),
+                      width: 30),
+                  Text(post.meta.votes[vote].toString())
+                ],
+              ),
+            ),
+          );
+        }
+      }
+    }
+
+    return Row(children: voteWidgets);
   }
 
   @override
