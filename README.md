@@ -15,15 +15,16 @@ The app *should* work on iOS but, I still need a Macbook and iPhone to test/buil
 - [x] Forum
 - [ ] Thread
   - [ ] Post content parsing 
-    - [x]  Postquotes
-    - [x]  Youtube
-    - [x]  Basic text
-    - [ ]  Links
-    - [x]  Images
-    - [ ]  Videos
-    - [ ]  Twitter embeds
-    - [ ]  iFrame embeds (those from Sensetional headlines)
-    - [ ]  Twitch embeds
+    - [x] Postquotes
+    - [x] Youtube
+    - [x] Basic text
+    - [ ] Spoiler tags
+    - [ ] Links
+    - [x] Images
+    - [ ] Videos
+    - [ ] Twitter embeds
+    - [ ] iFrame embeds (those from Sensetional headlines)
+    - [ ] Twitch embeds
   - [ ] Post ratings
 - [x] Image viewer
   - [x] Transition
