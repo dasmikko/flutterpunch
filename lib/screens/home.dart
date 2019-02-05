@@ -14,7 +14,7 @@ import 'package:flutter_punch/widgets/FPDrawerWidget.dart';
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MyHomePage(title: 'Flutter Punch');
+    return MyHomePage(title: 'Newpunch Droid');
   }
 }
 
