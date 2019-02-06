@@ -24,15 +24,19 @@ class PostListSM extends Model {
   }
 
   Future<Null> getPosts(String url) async {
-    print("Gettings thread");
+    print("Gettings posts");
 
     await APIHelper().fetchThread(url).then((data) {
       _postList = data;
+
+      print("Posts fetched");
 
       // Then notify all the listeners.
       notifyListeners();
 
       return null;
     });
+
+    print("Get posts finished");
   }
 }

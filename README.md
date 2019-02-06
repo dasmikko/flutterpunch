@@ -18,6 +18,8 @@ The app *should* work on iOS but, I still need a Macbook and iPhone to test/buil
     - [x] Postquotes
     - [x] Youtube
     - [x] Basic text
+    - [x] Emotes
+    - [x] Mentions
     - [ ] Spoiler tags
     - [ ] Links
     - [x] Images

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_punch/helpers/API.dart';
 import 'package:flutter_punch/models/ThreadModel.dart';
 import 'package:flutter_punch/models/PostListModel.dart';
 import 'package:flutter_punch/models/PostModel.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:youtube_player/youtube_player.dart';
 import 'package:flutter_punch/screens/imageViewer.dart';
 import 'package:universal_widget/universal_widget.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -15,6 +13,10 @@ import 'package:flutter_punch/widgets/FullScreenLoadingWidget.dart';
 import 'package:flutter_punch/widgets/FPDrawerWidget.dart';
 import 'package:flutter_punch/helpers/Ratings.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_youtube/flutter_youtube.dart';
+import 'package:flutter_punch/widgets/PostElements/Video.dart';
+import 'package:numberpicker/numberpicker.dart';
+import 'dart:async';
 
 class ThreadScreen extends StatefulWidget {
   final ThreadModel thread;
@@ -49,13 +51,16 @@ class _ThreadScreenState extends State<ThreadScreen> {
     });
   }
 
+  void playYouTubeVideo(String url) {
+    FlutterYoutube.playYoutubeVideoByUrl(
+        apiKey: "AIzaSyBehHEbtDN5ExcdWydEBp5R8EYlB6cf6nM",
+        videoUrl: url,
+        autoPlay: true, //default falase
+        fullScreen: false //default false
+        );
+  }
+
   void changePage(int number) {
-    print(number.toString().length);
-
-    int oldNumber = _model.pageNumber;
-
-    print(widget.thread.url);
-
     String urlWithCurrentPageNumber = widget.thread.url;
     urlWithCurrentPageNumber = urlWithCurrentPageNumber.substring(
         0, urlWithCurrentPageNumber.length - (number.toString().length + 2));
@@ -66,18 +71,18 @@ class _ThreadScreenState extends State<ThreadScreen> {
     print(urlWithCurrentPageNumber);
 
     _model.updateLoadingState(true);
-    _model.getPosts(urlWithCurrentPageNumber).then((nothing) {
-      _model.updatePageNumber(number);
-      _model.updateLoadingState(false);
 
-      _scrollController.jumpTo(0.0);
+    _model.getPosts(urlWithCurrentPageNumber).then((nothing) {
+      Timer(Duration(milliseconds: 800), () => _scrollController.jumpTo(0.0));
+
+      print("should jump in list");
+      _model.updatePageNumber(number);
+      _model.updateLoadingState(false);  
     });
   }
 
   // Handle the different widget types!
   Widget handleWidget(dom.Node node) {
-    print(node.attributes);
-
     switch (node.attributes['contenttype']) {
       case 'image':
         return GestureDetector(
@@ -102,17 +107,17 @@ class _ThreadScreenState extends State<ThreadScreen> {
         return Container(
           child: Column(
             children: <Widget>[
-              YoutubePlayer(
-                source: node.attributes['url'],
-                quality: YoutubeQuality.HD,
-                aspectRatio: 16 / 9,
-                showThumbnail: true,
-                autoPlay: false,
-              ),
+              RaisedButton(
+                child: Text('Open YouTube video'),
+                onPressed: () =>
+                    playYouTubeVideo(node.attributes['url'].toString()),
+              )
             ],
           ),
         );
         break;
+      case 'video':
+        return VideoElement(node.attributes['url']);
       default:
         return Text('unknown type');
     }
@@ -251,8 +256,6 @@ class _ThreadScreenState extends State<ThreadScreen> {
   }
 
   Widget postFooter(PostModel post) {
-    print(post.meta.votes);
-
     List<Widget> voteWidgets = new List();
 
     if (post.meta.votes != null && post.meta.votes.length > 0) {
@@ -299,11 +302,36 @@ class _ThreadScreenState extends State<ThreadScreen> {
     return Row(children: voteWidgets);
   }
 
+  void showJumpDialog() {
+    showDialog<int>(
+      context: context,
+      builder: (BuildContext context) {
+        return new NumberPickerDialog.integer(
+          minValue: 1,
+          maxValue: _model.posts.totalPages,
+          title: new Text("Jump to page"),
+          initialIntegerValue: _model.posts.currentPage,
+        );
+      }
+    ).then((int value) {
+      if (value != null) changePage(value);
+    });
+
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.thread.title),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.redo),
+            tooltip: "Jump to page",
+            onPressed: showJumpDialog,
+          )
+        ],
       ),
       bottomNavigationBar: UniversalWidget(
         name: "paginator",
