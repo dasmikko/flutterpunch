@@ -25,7 +25,7 @@ The app *should* work on iOS but, I still need a Macbook and iPhone to test/buil
     - [ ] Twitter embeds
     - [ ] iFrame embeds (those from Sensetional headlines)
     - [ ] Twitch embeds
-  - [ ] Post ratings
+  - [x] Post ratings
 - [x] Image viewer
   - [x] Transition
   - [x] Zoom
