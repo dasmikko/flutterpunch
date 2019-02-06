@@ -17,6 +17,7 @@ import 'package:flutter_youtube/flutter_youtube.dart';
 import 'package:flutter_punch/widgets/PostElements/Video.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'dart:async';
+import 'package:url_launcher/url_launcher.dart';
 
 class ThreadScreen extends StatefulWidget {
   final ThreadModel thread;
@@ -49,6 +50,14 @@ class _ThreadScreenState extends State<ThreadScreen> {
             .update(duration: 0.5, height: 50.0, opacity: 1);
       }
     });
+  }
+
+  void launchUrl (String url) async {
+    if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
   }
 
   void playYouTubeVideo(String url) {
@@ -230,6 +239,9 @@ class _ThreadScreenState extends State<ThreadScreen> {
                 padding: EdgeInsets.only(left: 8.0, right: 8.0),
                 child: Html(
                   data: post.contentAsHtml,
+                  onLinkTap: (url) {
+                    launchUrl(url);
+                  },
                   customRender: (node, children) {
                     if (node is dom.Element) {
                       switch (node.localName) {

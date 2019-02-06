@@ -21,9 +21,9 @@ The app *should* work on iOS but, I still need a Macbook and iPhone to test/buil
     - [x] Emotes
     - [x] Mentions
     - [ ] Spoiler tags
-    - [ ] Links
+    - [x] Links
     - [x] Images
-    - [ ] Videos
+    - [x] Videos
     - [ ] Twitter embeds
     - [ ] iFrame embeds (those from Sensetional headlines)
     - [ ] Twitch embeds
