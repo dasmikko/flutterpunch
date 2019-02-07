@@ -29,6 +29,7 @@ class _MyAppState extends State<ForumScreen> {
   void initState() {
     super.initState();
 
+    print(widget.forum.id);
     _model.updateLoadingState(true);
     _model.getForum(widget.forum.id).then((val) {
       _model.updateLoadingState(false);
@@ -51,7 +52,14 @@ class _MyAppState extends State<ForumScreen> {
   void changePage(int number) {
     _model.updateLoadingState(true);
 
-    _model.getForum(widget.forum.id).then((nothing) {
+
+    var url = widget.forum.id;
+
+    if (number > 1) {
+      url = url + "/p/" + number.toString();
+    }
+
+    _model.getForum(url).then((nothing) {
         print("should jump in list");
       _model.updatePageNumber(number);
       _model.updateLoadingState(false);  
