@@ -10,10 +10,17 @@ class ForumModelScoped extends Model {
   ThreadListModel _threadList =
       new ThreadListModel(threads: new List<ThreadModel>());
 
+  int _pageNumber = 1;
   bool _isLoading = false;
 
   bool get isLoading => _isLoading;
+  int get pageNumber => _pageNumber; 
   ThreadListModel get thread => _threadList;
+
+  void updatePageNumber(int newPagenumber) {
+    _pageNumber = newPagenumber;
+    notifyListeners();
+  }
 
   void updateLoadingState(bool newState) {
     _isLoading = newState;
