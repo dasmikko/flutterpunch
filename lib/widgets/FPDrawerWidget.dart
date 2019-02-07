@@ -8,13 +8,18 @@ class FPDrawerWidget extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              child: Text("Facepunch User"),
+              child: Text("Not logged in"),
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.red,
               ),
             ),
             ListTile(
-              title: Text('Item 1'),
+              title: Text('Login (Not available)'),
+              enabled: false,
+            ),
+            ListTile(
+              title: Text('Settings (Not available)'),
+              enabled: false,
             ),
           ],
         ),
