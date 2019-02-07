@@ -6,19 +6,9 @@ import 'package:video_player/video_player.dart';
 
 class VideoElement extends StatefulWidget {
   String url;
-  VideoPlayerController vidController = null;
-  ChewieController chewieController = null;
+  
 
-  VideoElement(@required this.url) {
-    this.vidController = VideoPlayerController.network(this.url);
-    this.chewieController = ChewieController(
-            videoPlayerController: vidController,
-            aspectRatio: 16 / 9,
-            autoInitialize: true,
-            looping: true,
-            autoPlay: false
-          );
-  }
+  VideoElement(@required this.url);
   
 
   @override
@@ -26,11 +16,47 @@ class VideoElement extends StatefulWidget {
 }
 
 class _VideoElementState extends State<VideoElement> {
+  VideoPlayerController vidController;
+  ChewieController chewieController;
+  Size size = new Size(16, 9);
+
+  @override
+  void initState() {
+    super.initState();
+
+    vidController = VideoPlayerController.network(widget.url);
+    
+    vidController..initialize().then((onValue) {
+      print(vidController.value.size);
+      setState(() {
+        size = vidController.value.size;
+
+        chewieController = ChewieController(
+            videoPlayerController: vidController,
+            aspectRatio: size.width / size.height,
+            autoInitialize: false,
+            looping: true,
+            autoPlay: false
+          );
+      });
+    });
+
+    
+
+    chewieController = ChewieController(
+            videoPlayerController: vidController,
+            aspectRatio: size.width / size.height,
+            autoInitialize: false,
+            looping: true,
+            autoPlay: false
+          );
+  }
+
 
   @override
   void dispose() {
-    widget.vidController.dispose();
-    widget.chewieController.dispose();
+    vidController.dispose();
+    chewieController.dispose();
     super.dispose();
   }
 
@@ -38,7 +64,7 @@ class _VideoElementState extends State<VideoElement> {
   Widget build(BuildContext context) {
     return Container(
         child: Chewie(
-          controller: widget.chewieController,
+          controller: chewieController,
         ),
     );
   }
