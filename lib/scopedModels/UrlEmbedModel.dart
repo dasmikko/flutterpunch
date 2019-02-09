@@ -5,8 +5,8 @@ import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
 
 class UrlEmbedModel extends Model {
-  String _title = "Fetching...";
-  String _description = "Fetching still...";
+  String _title = "Fetching embed...";
+  String _description = "";
   String _imageUrl;
 
   // Getters
