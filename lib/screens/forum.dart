@@ -24,16 +24,27 @@ class _MyAppState extends State<ForumScreen> {
   ThreadListModel threadList =
       new ThreadListModel(threads: new List<ThreadModel>());
   ForumModelScoped _model = ForumModelScoped();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     super.initState();
 
-    print(widget.forum.id);
-    _model.updateLoadingState(true);
-    _model.getForum(widget.forum.id).then((val) {
-      _model.updateLoadingState(false);
+    WidgetsBinding.instance
+      .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
 
+    print(widget.forum.id);
+  }
+
+  Future<void> _refresh() {
+    var url = widget.forum.id;
+
+    if (_model.pageNumber > 1) {
+      url = url + "/p/" + _model.pageNumber.toString();
+    }
+
+    return _model.getForum(url).then((val) {
       if (_model.thread.totalPages > 1) {
         UniversalWidget.find("paginator")
             .update(duration: 0.5, height: 50.0, opacity: 1);
@@ -50,20 +61,8 @@ class _MyAppState extends State<ForumScreen> {
   }
 
   void changePage(int number) {
-    _model.updateLoadingState(true);
-
-
-    var url = widget.forum.id;
-
-    if (number > 1) {
-      url = url + "/p/" + number.toString();
-    }
-
-    _model.getForum(url).then((nothing) {
-        print("should jump in list");
-      _model.updatePageNumber(number);
-      _model.updateLoadingState(false);  
-    });
+    _model.updatePageNumber(number);
+    _refreshIndicatorKey.currentState.show();
   }
 
   Widget loadingContent(model) {
@@ -72,8 +71,7 @@ class _MyAppState extends State<ForumScreen> {
 
   Widget content(model) {
     return Container(
-      child: ListView.separated(
-        shrinkWrap: true,
+      child:  ListView.separated(
         separatorBuilder: (BuildContext context, int index) => Divider(
               height: 1.0,
             ),
@@ -147,16 +145,10 @@ class _MyAppState extends State<ForumScreen> {
           model: _model,
           child: new ScopedModelDescendant<ForumModelScoped>(
             builder: (context, child, model) {
-              return AnimatedCrossFade(
-                duration: Duration(milliseconds: 300),
-                firstCurve: Curves.ease,
-                secondCurve: Curves.ease,
-                crossFadeState: model.isLoading
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
-                firstChild: loadingContent(model),
-                secondChild: content(model),
-              );
+              return  RefreshIndicator(
+        key: _refreshIndicatorKey,
+        onRefresh: _refresh,
+        child:content(model));
             },
           ),
         ),

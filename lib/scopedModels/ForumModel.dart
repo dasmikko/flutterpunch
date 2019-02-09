@@ -19,7 +19,6 @@ class ForumModelScoped extends Model {
 
   void updatePageNumber(int newPagenumber) {
     _pageNumber = newPagenumber;
-    notifyListeners();
   }
 
   void updateLoadingState(bool newState) {

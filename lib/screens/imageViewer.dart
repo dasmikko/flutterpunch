@@ -30,6 +30,7 @@ class ImageViewerScreen extends StatelessWidget {
             minScale: 1.0,
             maxScale: 2.0,
             zoomSteps: 3,
+            enableFling: true,
             autoCenter: true,
             multiFingersPan: false,
             bounceBackBoundary: true,

@@ -25,13 +25,17 @@ dependencies:
   video_player: ^0.7.0
   flutter_inappbrowser: ^0.5.51
   flutter_svg: ^0.10.3
-  flutter_advanced_networkimage: ^0.4.0
+  flutter_advanced_networkimage: 
+    git: 
+      url: https://github.com/mchome/flutter_advanced_networkimage.git
+      ref: 8e364a72aeb58dbecc6cc65196b0342478e264df
   flutter_youtube: ^1.1.4
   flutter_html: ^0.9.3
   universal_widget: ^1.2.5
   scoped_model: ^1.0.1
   numberpicker: ^1.0.0
   url_launcher: ^5.0.0
+  
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

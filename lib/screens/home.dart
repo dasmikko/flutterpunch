@@ -40,10 +40,15 @@ class _MyHomePageState extends State<MyHomePage> {
   CategoryListModel categoryList =
       new CategoryListModel(categories: new List<CategoryModel>());
   CategoryModelScoped _categoryModelScoped = CategoryModelScoped();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance
+      .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
 
     // Fetch the categories
     _categoryModelScoped.updateLoadingState(true);
@@ -52,10 +57,10 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _reload() {
+  Future<void> _reload() {
     // Fetch the categories
     _categoryModelScoped.updateLoadingState(true);
-    _categoryModelScoped.getCategories().then((nothing) {
+    return _categoryModelScoped.getCategories().then((nothing) {
       _categoryModelScoped.updateLoadingState(false);
     });
   }
@@ -67,37 +72,43 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget content(model) {
     return Container(
       alignment: Alignment.center,
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: _categoryModelScoped.categories.categories.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                CategoryWidget(
-                  categoryTitle: _categoryModelScoped
-                      .categories.categories[index].categoryName,
-                  forums:
-                      _categoryModelScoped.categories.categories[index].forums,
-                  onForumTap: (ForumsModel forum) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ForumScreen(forum: forum)),
-                    );
-                  },
-                ),
-              ],
-            ),
-          );
-        },
+      child: RefreshIndicator(
+        key: _refreshIndicatorKey,
+        onRefresh: _reload,
+        child: ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: _categoryModelScoped.categories.categories.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  CategoryWidget(
+                    categoryTitle: _categoryModelScoped
+                        .categories.categories[index].categoryName,
+                    forums: _categoryModelScoped
+                        .categories.categories[index].forums,
+                    onForumTap: (ForumsModel forum) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ForumScreen(forum: forum)),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -117,15 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
           model: _categoryModelScoped,
           child: new ScopedModelDescendant<CategoryModelScoped>(
               builder: (context, child, model) {
-            return AnimatedCrossFade(
-                duration: Duration(milliseconds: 300),
-                firstCurve: Curves.ease,
-                secondCurve: Curves.ease,
-                crossFadeState: model.isLoading
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
-                firstChild: loadingContent(model),
-                secondChild: content(model));
+            return content(model);
           }),
         ),
       ),
