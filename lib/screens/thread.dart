@@ -15,6 +15,7 @@ import 'package:flutter_punch/helpers/Ratings.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_youtube/flutter_youtube.dart';
 import 'package:flutter_punch/widgets/PostElements/Video.dart';
+import 'package:flutter_punch/widgets/PostElements/Embed.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
@@ -128,7 +129,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
       case 'video':
         return VideoElement(node.attributes['url']);
       default:
-        return Text('unknown type');
+        return EmbedWidget(node.attributes['url']);
     }
   }
 
