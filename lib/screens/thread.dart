@@ -41,14 +41,16 @@ class _ThreadScreenState extends State<ThreadScreen> {
     super.initState();
 
     WidgetsBinding.instance
-      .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
+        .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
   }
 
   Future<void> _refresh() {
     String urlWithCurrentPageNumber = widget.thread.url;
 
     urlWithCurrentPageNumber = urlWithCurrentPageNumber.substring(
-        0, urlWithCurrentPageNumber.length - (_model.pageNumber.toString().length + 2));
+        0,
+        urlWithCurrentPageNumber.length -
+            (_model.pageNumber.toString().length + 2));
 
     urlWithCurrentPageNumber =
         urlWithCurrentPageNumber + "/" + _model.pageNumber.toString() + "/";
@@ -63,12 +65,12 @@ class _ThreadScreenState extends State<ThreadScreen> {
     });
   }
 
-  void launchUrl (String url) async {
+  void launchUrl(String url) async {
     if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
-  }
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   void playYouTubeVideo(String url) {
@@ -81,9 +83,9 @@ class _ThreadScreenState extends State<ThreadScreen> {
   }
 
   void changePage(int number) {
-     _model.updatePageNumber(number);
+    _model.updatePageNumber(number);
     WidgetsBinding.instance
-      .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
+        .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
   }
 
   // Handle the different widget types!
@@ -99,17 +101,21 @@ class _ThreadScreenState extends State<ThreadScreen> {
                       ImageViewerScreen(url: node.attributes['url'])),
             );
           },
-          child: Hero(
-            tag: node.attributes['url'],
-            child: Image(
-              image: AdvancedNetworkImage(node.attributes['url'],
-                  useDiskCache: true),
+          child: Container(
+            margin: EdgeInsets.only(bottom: 8.0),
+            child: Hero(
+              tag: node.attributes['url'],
+              child: Image(
+                image: AdvancedNetworkImage(node.attributes['url'],
+                    useDiskCache: true),
+              ),
             ),
           ),
         );
         break;
       case 'youtube':
         return Container(
+          margin: EdgeInsets.only(bottom: 8.0),
           child: Column(
             children: <Widget>[
               RaisedButton(
@@ -312,20 +318,17 @@ class _ThreadScreenState extends State<ThreadScreen> {
 
   void showJumpDialog() {
     showDialog<int>(
-      context: context,
-      builder: (BuildContext context) {
-        return new NumberPickerDialog.integer(
-          minValue: 1,
-          maxValue: _model.posts.totalPages,
-          title: new Text("Jump to page"),
-          initialIntegerValue: _model.posts.currentPage,
-        );
-      }
-    ).then((int value) {
+        context: context,
+        builder: (BuildContext context) {
+          return new NumberPickerDialog.integer(
+            minValue: 1,
+            maxValue: _model.posts.totalPages,
+            title: new Text("Jump to page"),
+            initialIntegerValue: _model.posts.currentPage,
+          );
+        }).then((int value) {
       if (value != null) changePage(value);
     });
-
-    
   }
 
   @override
