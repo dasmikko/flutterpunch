@@ -15,7 +15,6 @@ class PostListSM extends Model {
 
   void updatePageNumber(int newPagenumber) {
     _pageNumber = newPagenumber;
-    notifyListeners();
   }
 
   void updateLoadingState(bool newState) {
@@ -29,14 +28,10 @@ class PostListSM extends Model {
     await APIHelper().fetchThread(url).then((data) {
       _postList = data;
 
-      print("Posts fetched");
-
       // Then notify all the listeners.
       notifyListeners();
 
       return null;
     });
-
-    print("Get posts finished");
   }
 }

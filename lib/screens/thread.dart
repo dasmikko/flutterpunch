@@ -33,21 +33,31 @@ class _ThreadScreenState extends State<ThreadScreen> {
   PostListModel postList = new PostListModel(posts: new List<PostModel>());
   ScrollController _scrollController = new ScrollController();
   PostListSM _model = PostListSM();
-  int pageNumber = 1;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     super.initState();
 
-    String urlWithCurrentPageNumber =
-        widget.thread.url.replaceAll('/1/', '/' + pageNumber.toString() + '/');
+    WidgetsBinding.instance
+      .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
+  }
 
-    _model.updateLoadingState(true);
-    _model.getPosts(urlWithCurrentPageNumber).then((onValue) {
-      _model.updateLoadingState(false);
+  Future<void> _refresh() {
+    String urlWithCurrentPageNumber = widget.thread.url;
 
+    urlWithCurrentPageNumber = urlWithCurrentPageNumber.substring(
+        0, urlWithCurrentPageNumber.length - (_model.pageNumber.toString().length + 2));
+
+    urlWithCurrentPageNumber =
+        urlWithCurrentPageNumber + "/" + _model.pageNumber.toString() + "/";
+
+    return _model.getPosts(urlWithCurrentPageNumber).then((onValue) {
+      print('posts fetched');
       if (_model.posts.totalPages > 1) {
-        UniversalWidget.find("paginator")
+        print('show pagnation');
+        UniversalWidget.find("paginatorThread")
             .update(duration: 0.5, height: 50.0, opacity: 1);
       }
     });
@@ -71,24 +81,9 @@ class _ThreadScreenState extends State<ThreadScreen> {
   }
 
   void changePage(int number) {
-    String urlWithCurrentPageNumber = widget.thread.url;
-    urlWithCurrentPageNumber = urlWithCurrentPageNumber.substring(
-        0, urlWithCurrentPageNumber.length - (number.toString().length + 2));
-
-    urlWithCurrentPageNumber =
-        urlWithCurrentPageNumber + "/" + number.toString() + "/";
-
-    print(urlWithCurrentPageNumber);
-
-    _model.updateLoadingState(true);
-
-    _model.getPosts(urlWithCurrentPageNumber).then((nothing) {
-      Timer(Duration(milliseconds: 800), () => _scrollController.jumpTo(0.0));
-
-      print("should jump in list");
-      _model.updatePageNumber(number);
-      _model.updateLoadingState(false);  
-    });
+     _model.updatePageNumber(number);
+    WidgetsBinding.instance
+      .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
   }
 
   // Handle the different widget types!
@@ -179,7 +174,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
 
   Widget content(model) {
     return ListView.builder(
-      shrinkWrap: true,
+      physics: AlwaysScrollableScrollPhysics(),
       controller: _scrollController,
       itemCount: model.posts.posts.length,
       itemBuilder: (context, index) {
@@ -347,7 +342,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
         ],
       ),
       bottomNavigationBar: UniversalWidget(
-        name: "paginator",
+        name: "paginatorThread",
         height: _model.posts.posts.length > 0 && _model.posts.totalPages > 1
             ? 50.0
             : 0.0,
@@ -399,15 +394,10 @@ class _ThreadScreenState extends State<ThreadScreen> {
           model: _model,
           child: new ScopedModelDescendant<PostListSM>(
             builder: (context, child, model) {
-              return AnimatedCrossFade(
-                duration: Duration(milliseconds: 300),
-                firstCurve: Curves.ease,
-                secondCurve: Curves.ease,
-                crossFadeState: model.isLoading
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
-                firstChild: loadingContent(model),
-                secondChild: content(model),
+              return RefreshIndicator(
+                onRefresh: _refresh,
+                key: _refreshIndicatorKey,
+                child: content(model),
               );
             },
           ),

@@ -77,7 +77,6 @@ class _MyHomePageState extends State<MyHomePage> {
         onRefresh: _reload,
         child: ListView.builder(
           physics: const AlwaysScrollableScrollPhysics(),
-          shrinkWrap: true,
           itemCount: _categoryModelScoped.categories.categories.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
