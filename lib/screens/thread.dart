@@ -393,17 +393,15 @@ class _ThreadScreenState extends State<ThreadScreen> {
         ),
       ),
       body: Container(
-        child: ScopedModel<PostListSM>(
-          model: _model,
-          child: new ScopedModelDescendant<PostListSM>(
-            builder: (context, child, model) {
-              return RefreshIndicator(
-                onRefresh: _refresh,
-                key: _refreshIndicatorKey,
-                child: content(model),
-              );
-            },
-          ),
+        child: RefreshIndicator(
+          onRefresh: _refresh,
+          key: _refreshIndicatorKey,
+          child: ScopedModel<PostListSM>(
+              model: _model,
+              child: new ScopedModelDescendant<PostListSM>(
+                  builder: (context, child, model) {
+                return content(model);
+              })),
         ),
       ),
       drawer: FPDrawerWidget(),
