@@ -59,14 +59,12 @@ class _FPDrawerWidgetState extends State<FPDrawerWidget> {
                   style: TextStyle(color: Colors.white),
                 ),
                 Container(
-                  padding: EdgeInsets.only(top: 2, bottom: 2, right: 4, left: 4),
+                  padding:
+                      EdgeInsets.only(top: 2, bottom: 2, right: 4, left: 4),
                   margin: EdgeInsets.only(left: 6),
                   decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(6)
-                    )
-                  ),
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.all(Radius.circular(6))),
                   child: Text(
                     level.toString(),
                     style: TextStyle(color: Colors.white),
@@ -115,6 +113,7 @@ class _FPDrawerWidgetState extends State<FPDrawerWidget> {
           final flutterWebviewPlugin = new FlutterWebviewPlugin();
 
           flutterWebviewPlugin.onUrlChanged.listen((String url) async {
+            print(url);
             if (url.contains("forum.facepunch.com")) {
               var cookies = await CookieManager.getCookies(
                   "https://forum.facepunch.com/");
@@ -148,7 +147,10 @@ class _FPDrawerWidgetState extends State<FPDrawerWidget> {
           });
 
           flutterWebviewPlugin.launch(
-              "https://auth.facepunch.com/login/?r=aHR0cHM6Ly9mb3J1bS5mYWNlcHVuY2guY29tLz9uYz0xMjY2MmM%3D");
+            "https://auth.facepunch.com/login/?r=aHR0cHM6Ly9mb3J1bS5mYWNlcHVuY2guY29tLz9uYz0xMjY2MmM%3D",
+            userAgent:
+                "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36",
+          );
 
           /*Navigator.push(
             context,
