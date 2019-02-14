@@ -19,6 +19,8 @@ import 'package:flutter_punch/widgets/PostElements/Embed.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_punch/helpers/API.dart';
+import 'package:flutter_punch/widgets/PostElements/PostFooter.dart';
 
 class ThreadScreen extends StatefulWidget {
   final ThreadModel thread;
@@ -260,7 +262,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
               ),
               Container(
                 margin: EdgeInsets.only(left: 8.0, right: 8.0),
-                child: postFooter(post),
+                child: postFooter(post, () => _refreshIndicatorKey.currentState.show(), context),
               )
             ],
           ),
@@ -269,52 +271,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
     );
   }
 
-  Widget postFooter(PostModel post) {
-    List<Widget> voteWidgets = new List();
-
-    if (post.meta.votes != null && post.meta.votes.length > 0) {
-      for (var vote in post.meta.votes.keys) {
-        Rating rating = RatingsHelper()
-            .RatingsList
-            .where((i) => i.id == int.parse(vote))
-            .first;
-
-        if (rating.icon.contains(".svg")) {
-          voteWidgets.add(
-            Container(
-              margin: EdgeInsets.only(right: 8.0),
-              child: Column(
-                children: <Widget>[
-                  SvgPicture(
-                      AdvancedNetworkSvg(rating.icon, SvgPicture.svgByteDecoder,
-                          useDiskCache: true),
-                      width: 30),
-                  Text(post.meta.votes[vote].toString())
-                ],
-              ),
-            ),
-          );
-        } else {
-          voteWidgets.add(
-            Container(
-              margin: EdgeInsets.only(right: 8.0),
-              child: Column(
-                children: <Widget>[
-                  Image(
-                      image:
-                          AdvancedNetworkImage(rating.icon, useDiskCache: true),
-                      width: 30),
-                  Text(post.meta.votes[vote].toString())
-                ],
-              ),
-            ),
-          );
-        }
-      }
-    }
-
-    return Row(children: voteWidgets);
-  }
+  
 
   void showJumpDialog() {
     showDialog<int>(

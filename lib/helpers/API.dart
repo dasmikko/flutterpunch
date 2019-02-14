@@ -8,6 +8,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:convert' show utf8;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
 
 class APIHelper {
   final baseURL = 'https://facepunch-api-eu.herokuapp.com/';
@@ -105,6 +106,37 @@ class APIHelper {
     } else {
       // If that response was not OK, throw an error.
       throw Exception('Failed to load post');
+    }
+  }
+
+  Future<bool> ratePost(int postId, int ratingId) async {
+    print('Rating post');
+    
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    FormData formData = new FormData.from({
+      "postid": postId,
+      "ratingid": ratingId,
+    });
+
+    Response response;
+    Dio dio = Dio();
+    dio.options.headers = {
+      'Origin': 'https://forum.facepunch.com',
+      'Cookie': prefs.getString('cookieString')
+    };
+
+    response = await dio.post('https://forum.facepunch.com/vote/post/', data: formData);   
+    
+    if (response.statusCode == 200) {
+      print('rated!');
+
+      print(response.data);
+      // If server returns an OK response, parse the JSON
+      return true;
+    } else {
+      // If that response was not OK, throw an error.
+      throw Exception("Failed to rate");
     }
   }
 }

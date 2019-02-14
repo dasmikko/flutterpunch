@@ -2,14 +2,22 @@ class PostModel {
   final UserModel user;
   final String contentAsHtml;
   final PostMeta meta;
+  final int postId;
+  final bool canVote;
+  final bool canReply;
+  final bool isOwnPost;
 
-  PostModel({this.user, this.contentAsHtml, this.meta});
+  PostModel({this.user, this.contentAsHtml, this.meta, this.postId, this.canVote, this.canReply, this.isOwnPost});
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
     return PostModel(
-        user: UserModel.fromJson(json['user']),
-        contentAsHtml: json['contentAsHtml'],
-        meta: PostMeta.fromJson(json['meta']));
+      postId: json['postid'],
+      canReply: json['canreply'],
+      canVote: json['canvote'],
+      isOwnPost: json['isownpost'],
+      user: UserModel.fromJson(json['user']),
+      contentAsHtml: json['contentAsHtml'],
+      meta: PostMeta.fromJson(json['meta']));
   }
 }
 

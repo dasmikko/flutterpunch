@@ -1,5 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 class RatingsHelper {
-  final List<Rating> RatingsList = [
+  final List<Rating> ratingsList = [
     new Rating(
         id: 1,
         name: "Agree",
@@ -127,6 +131,67 @@ class RatingsHelper {
             "https://files.facepunch.com/garry/6242f2b6-8c3c-4478-9102-19f7d0884280.svg",
         cost: 0),
   ];
+
+  List<Widget> toOptionsList(Function onPressed) {
+    List<Widget> list = new List();
+
+    ratingsList.forEach((element) {
+      if (element.icon.contains('.svg')) {
+        list.add(
+          SimpleDialogOption(
+            onPressed: () => onPressed(element.id),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(right: 12),
+                        child: SvgPicture(
+                            AdvancedNetworkSvg(
+                                element.icon, SvgPicture.svgByteDecoder,
+                                useDiskCache: true),
+                            width: 30),
+                      )
+                    ],
+                  ),
+                ),
+                Text(element.name),
+              ],
+            ),
+          ),
+        );
+      } else {
+        list.add(
+          SimpleDialogOption(
+            onPressed: () => onPressed(element.id),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(right: 12),
+                        child: Image(
+                          image: AdvancedNetworkImage(element.icon,
+                              useDiskCache: true),
+                          width: 30),
+                      ),
+                      Text(element.name)
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    });
+
+    return list;
+  }
 }
 
 class Rating {
