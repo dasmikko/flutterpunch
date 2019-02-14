@@ -34,12 +34,12 @@ The app *should* work on iOS but, I still need a Macbook and iPhone to test/buil
   - [ ] Download image
   - [ ] Share
 - [ ] View user profile
-- [ ] Authenticate
-- [ ] Auth: Twitter
-- [ ] Auth: Facebook
-- [ ] Auth: Google
-- [ ] Auth: Github
-- [ ] Auth: Steam
+- [x] Authenticate
+- [x] Auth: Twitter
+- [x] Auth: Facebook
+- [x] Auth: Google
+- [x] Auth: Github
+- [x] Auth: Steam
 - [ ] Make post in thread
 - [ ] Make thread
 - [ ] Rate posts
