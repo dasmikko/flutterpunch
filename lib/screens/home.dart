@@ -49,12 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     WidgetsBinding.instance
       .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
-
-    // Fetch the categories
-    _categoryModelScoped.updateLoadingState(true);
-    _categoryModelScoped.getCategories().then((nothing) {
-      _categoryModelScoped.updateLoadingState(false);
-    });
   }
 
   Future<void> _reload() {
@@ -132,11 +126,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       drawer: FPDrawerWidget(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _reload,
-        tooltip: 'Increment',
-        child: Icon(Icons.refresh),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
