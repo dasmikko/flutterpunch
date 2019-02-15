@@ -21,6 +21,7 @@ import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_punch/helpers/API.dart';
 import 'package:flutter_punch/widgets/PostElements/PostFooter.dart';
+import 'package:flutter_punch/widgets/PostElements/PostHeader.dart';
 
 class ThreadScreen extends StatefulWidget {
   final ThreadModel thread;
@@ -193,52 +194,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Container(
-                // Post header
-                padding: EdgeInsets.only(
-                  left: 14.0,
-                  right: 14.0,
-                  top: 8.0,
-                  bottom: 8.0,
-                ),
-                margin: EdgeInsets.only(bottom: 8.0),
-                decoration: post.user.backgroundImage != null
-                    ? BoxDecoration(
-                        border: BorderDirectional(
-                          top: BorderSide(color: Colors.grey),
-                          bottom: BorderSide(color: Colors.grey),
-                        ),
-                        image: DecorationImage(
-                          image: AdvancedNetworkImage(
-                            post.user.backgroundImage,
-                          ),
-                          fit: BoxFit.cover,
-                          colorFilter: new ColorFilter.mode(
-                              Colors.black.withOpacity(0.2), BlendMode.dstATop),
-                        ),
-                      )
-                    : BoxDecoration(
-                        color: Colors.blueGrey[50],
-                        border: BorderDirectional(
-                          top: BorderSide(color: Colors.grey),
-                          bottom: BorderSide(color: Colors.grey),
-                        ),
-                      ),
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(right: 18.0),
-                      child: post.user.avatar != null
-                          ? Image(
-                              height: 28.0,
-                              image: NetworkImage(post.user.avatar),
-                            )
-                          : null,
-                    ),
-                    Text(post.user.username),
-                  ],
-                ),
-              ),
+              postHeader(post, context, _scrollController),
               Container(
                 padding: EdgeInsets.only(left: 8.0, right: 8.0),
                 child: Html(

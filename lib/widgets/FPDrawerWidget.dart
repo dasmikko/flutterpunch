@@ -7,6 +7,9 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:flutter_punch/helpers/API.dart';
+import 'package:flutter_punch/helpers/Alerts.dart';
+import 'package:flutter_punch/models/AlertsModel.dart';
 
 class FPDrawerWidget extends StatefulWidget {
   @override
@@ -19,6 +22,40 @@ class _FPDrawerWidgetState extends State<FPDrawerWidget> {
     super.initState();
 
     ScopedModel.of<DrawerModel>(context).updateLoginState();
+    ScopedModel.of<DrawerModel>(context).updateAlertCount();
+  }
+
+  bool notNull(Object o) => o != null;
+
+  void _showAlertsDialog(
+      BuildContext context, List<SingleAlertModel> alerts) async {
+    List<Widget> alertsWidgetList = new List();
+
+    alerts.forEach((alert) {
+      print(alert.seen);
+      alertsWidgetList.add(InkWell(
+        child: Container(
+          padding: EdgeInsets.only(top: 12, bottom: 12, left: 10, right: 10),
+          decoration: BoxDecoration(
+            color: alert.seen ? Colors.grey.withOpacity(0.3) : Colors.white,
+            border: BorderDirectional(
+              top: BorderSide(color: Colors.grey),
+            ),
+          ),
+          child: AlertsHelper().alertHandler(alert),
+        ),
+      ));
+    });
+
+    SimpleDialog dialog = SimpleDialog(
+      title: Text('Alerts'),
+      children: alertsWidgetList,
+      contentPadding: EdgeInsets.all(0),
+      titlePadding: EdgeInsets.all(18),
+    );
+
+    var rating = await showDialog(
+        context: context, builder: (BuildContext context) => dialog);
   }
 
   List<Widget> loggedInList(context) {
@@ -32,6 +69,9 @@ class _FPDrawerWidgetState extends State<FPDrawerWidget> {
 
     final level =
         ScopedModel.of<DrawerModel>(context, rebuildOnChange: true).level;
+
+    final alertCount = 
+        ScopedModel.of<DrawerModel>(context, rebuildOnChange: true).alertsCount;
 
     return <Widget>[
       DrawerHeader(
@@ -84,6 +124,32 @@ class _FPDrawerWidgetState extends State<FPDrawerWidget> {
                 Colors.black.withOpacity(0.6), BlendMode.darken),
           ),
         ),
+      ),
+      ListTile(
+        title: Container(
+          child: Row(
+            children: <Widget>[
+              Text('Alerts'),
+              alertCount > 0 ? Container(
+                  padding:
+                      EdgeInsets.only(top: 2, bottom: 2, right: 4, left: 4),
+                  margin: EdgeInsets.only(left: 6),
+                  decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.all(Radius.circular(6))),
+                  child: Text(
+                    alertCount.toString(),
+                    style: TextStyle(color: Colors.white),
+                  ),
+              ) : null,
+            ].where(notNull).toList()
+          )
+        ),
+        onTap: () async {
+          APIHelper().getAlerts().then((alertsObj) {
+            _showAlertsDialog(context, alertsObj.alerts);
+          });
+        },
       ),
       ListTile(
         title: Text('Logout'),
