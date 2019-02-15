@@ -12,6 +12,9 @@ class DrawerModel extends Model {
   bool _hasFetchedUser = false;
   bool get hasFetchedUser => _hasFetchedUser;
 
+  int _alertsCount = 0;
+  int get alertsCount => _alertsCount;
+
   String _username = "";
   String _avatar = "";
   int _level = 0;
@@ -50,6 +53,14 @@ class DrawerModel extends Model {
       _avatar = userinfo.avatar;
       _level = userinfo.level;
       _backgroundImage = userinfo.backgroundImage;
+      notifyListeners();
+    });
+  }
+
+  void updateAlertCount() {
+    APIHelper().getAlerts().then((alertObj) {
+      _alertsCount = alertObj.count;
+
       notifyListeners();
     });
   }

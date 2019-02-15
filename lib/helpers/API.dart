@@ -4,6 +4,7 @@ import 'package:flutter_punch/models/CategoryListModel.dart';
 import 'package:flutter_punch/models/ThreadListModel.dart';
 import 'package:flutter_punch/models/PostListModel.dart';
 import 'package:flutter_punch/models/CurrentUserModel.dart';
+import 'package:flutter_punch/models/AlertsModel.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:convert' show utf8;
@@ -139,4 +140,29 @@ class APIHelper {
       throw Exception("Failed to rate");
     }
   }
+
+  Future<AlertsModel> getAlerts() async {
+    print('Getting alerts');
+    
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Response response;
+    Dio dio = Dio();
+    dio.options.headers = {
+      'Origin': 'https://forum.facepunch.com',
+      'Cookie': prefs.getString('cookieString')
+    };
+
+    response = await dio.post('https://forum.facepunch.com/forumuser/alerts/');   
+    
+    if (response.statusCode == 200) {
+      print('Got alerts');
+      // If server returns an OK response, parse the JSON
+      return AlertsModel.fromJson(response.data);
+    } else {
+      // If that response was not OK, throw an error.
+      throw Exception("Failed to rate");
+    }
+  }
+  
 }
