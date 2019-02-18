@@ -43,6 +43,10 @@ class _ThreadScreenState extends State<ThreadScreen> {
   void initState() {
     super.initState();
 
+    if (widget.thread.pageNumber != null) {
+      _model.updatePageNumber(widget.thread.pageNumber);
+    }
+
     WidgetsBinding.instance
         .addPostFrameCallback((_) => _refreshIndicatorKey.currentState.show());
   }

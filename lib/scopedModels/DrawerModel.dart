@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_punch/helpers/API.dart';
+import 'package:flutter_punch/models/AlertsModel.dart';
 
 class DrawerModel extends Model {
   bool _isLoggedIn = false;
@@ -14,6 +15,9 @@ class DrawerModel extends Model {
 
   int _alertsCount = 0;
   int get alertsCount => _alertsCount;
+
+  List<SingleAlertModel> _alerts = List();
+  List<SingleAlertModel> get alerts => _alerts;
 
   String _username = "";
   String _avatar = "";
@@ -60,6 +64,7 @@ class DrawerModel extends Model {
   void updateAlertCount() {
     APIHelper().getAlerts().then((alertObj) {
       _alertsCount = alertObj.count;
+      _alerts = alertObj.alerts;
 
       notifyListeners();
     });

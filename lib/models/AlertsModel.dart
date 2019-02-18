@@ -25,7 +25,7 @@ class SingleAlertModel {
   final int alertType;
   final int created;
   final int updated;
-  final bool seen;
+  bool seen;
   final ForumObject forum;
   final UserObject user;
   final PostObject post;

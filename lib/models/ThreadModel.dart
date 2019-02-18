@@ -7,6 +7,7 @@ class ThreadModel {
   final int viewedcount;
   final int postcount;
   final ThreadCreatorModel creator;
+  final int pageNumber;
 
   ThreadModel({
     this.url,
@@ -16,7 +17,8 @@ class ThreadModel {
     this.viewedcount,
     this.threadagedays,
     this.postcount,
-    this.creator
+    this.creator,
+    this.pageNumber
   });
 
   factory ThreadModel.fromJson(Map<String, dynamic> json) {

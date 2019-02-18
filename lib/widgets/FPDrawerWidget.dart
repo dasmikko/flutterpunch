@@ -10,6 +10,8 @@ import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_punch/helpers/API.dart';
 import 'package:flutter_punch/helpers/Alerts.dart';
 import 'package:flutter_punch/models/AlertsModel.dart';
+import 'package:flutter_punch/screens/thread.dart';
+import 'package:flutter_punch/models/ThreadModel.dart';
 
 class FPDrawerWidget extends StatefulWidget {
   @override
@@ -32,8 +34,23 @@ class _FPDrawerWidgetState extends State<FPDrawerWidget> {
     List<Widget> alertsWidgetList = new List();
 
     alerts.forEach((alert) {
-      print(alert.seen);
       alertsWidgetList.add(InkWell(
+        onTap: () {
+          print(alert.forum.url);
+          print(alert.thread.threadid);
+
+          double pages = alert.thread.postcount / 30;
+          int pagenumber = ((alert.post.postnumber -1) / 30).ceil();
+
+          String url = alert.forum.url + '/' + alert.thread.threadid + '/' + pagenumber.toString() + '/';
+
+          ThreadModel thread = new ThreadModel(url: url, title: alert.thread.name, pageNumber: pagenumber);
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ThreadScreen(thread: thread)),
+          );
+        },
         child: Container(
           padding: EdgeInsets.only(top: 12, bottom: 12, left: 10, right: 10),
           decoration: BoxDecoration(
@@ -72,6 +89,9 @@ class _FPDrawerWidgetState extends State<FPDrawerWidget> {
 
     final alertCount = 
         ScopedModel.of<DrawerModel>(context, rebuildOnChange: true).alertsCount;
+
+    final alerts = 
+        ScopedModel.of<DrawerModel>(context, rebuildOnChange: true).alerts;
 
     return <Widget>[
       DrawerHeader(
@@ -146,9 +166,7 @@ class _FPDrawerWidgetState extends State<FPDrawerWidget> {
           )
         ),
         onTap: () async {
-          APIHelper().getAlerts().then((alertsObj) {
-            _showAlertsDialog(context, alertsObj.alerts);
-          });
+          _showAlertsDialog(context, alerts);
         },
       ),
       ListTile(
