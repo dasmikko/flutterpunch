@@ -11,17 +11,15 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_punch/scopedModels/PostListSM.dart';
 import 'package:flutter_punch/widgets/FullScreenLoadingWidget.dart';
 import 'package:flutter_punch/widgets/FPDrawerWidget.dart';
-import 'package:flutter_punch/helpers/Ratings.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_youtube/flutter_youtube.dart';
 import 'package:flutter_punch/widgets/PostElements/Video.dart';
 import 'package:flutter_punch/widgets/PostElements/Embed.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_punch/helpers/API.dart';
 import 'package:flutter_punch/widgets/PostElements/PostFooter.dart';
 import 'package:flutter_punch/widgets/PostElements/PostHeader.dart';
+import 'package:flutter_punch/widgets/PostElements/Youtube.dart';
+import 'package:flutter_advanced_networkimage/transition.dart';
 
 class ThreadScreen extends StatefulWidget {
   final ThreadModel thread;
@@ -64,6 +62,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
 
     return _model.getPosts(urlWithCurrentPageNumber).then((onValue) {
       print('posts fetched');
+      _scrollController.jumpTo(0);
       if (_model.posts.totalPages > 1) {
         print('show pagnation');
         UniversalWidget.find("paginatorThread")
@@ -78,15 +77,6 @@ class _ThreadScreenState extends State<ThreadScreen> {
     } else {
       throw 'Could not launch $url';
     }
-  }
-
-  void playYouTubeVideo(String url) {
-    FlutterYoutube.playYoutubeVideoByUrl(
-        apiKey: "AIzaSyBehHEbtDN5ExcdWydEBp5R8EYlB6cf6nM",
-        videoUrl: url,
-        autoPlay: true, //default falase
-        fullScreen: false //default false
-        );
   }
 
   void changePage(int number) {
@@ -109,30 +99,20 @@ class _ThreadScreenState extends State<ThreadScreen> {
             );
           },
           child: Container(
+            height: 200,
             margin: EdgeInsets.only(bottom: 8.0),
             child: Hero(
               tag: node.attributes['url'],
-              child: Image(
+              child: TransitionToImage(
                 image: AdvancedNetworkImage(node.attributes['url'],
-                    useDiskCache: true),
+                    useDiskCache: true)
               ),
             ),
           ),
         );
         break;
       case 'youtube':
-        return Container(
-          margin: EdgeInsets.only(bottom: 8.0),
-          child: Column(
-            children: <Widget>[
-              RaisedButton(
-                child: Text('Open YouTube video'),
-                onPressed: () =>
-                    playYouTubeVideo(node.attributes['url'].toString()),
-              )
-            ],
-          ),
-        );
+        return YouTubeEmbed(url: node.attributes['url'].toString());
         break;
       case 'video':
         return VideoElement(node.attributes['url']);
