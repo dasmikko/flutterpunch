@@ -12,6 +12,9 @@ import 'package:flutter_punch/helpers/Alerts.dart';
 import 'package:flutter_punch/models/AlertsModel.dart';
 import 'package:flutter_punch/screens/thread.dart';
 import 'package:flutter_punch/models/ThreadModel.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:flutter_punch/helpers/ColorHelper.dart';
+import 'package:flutter_punch/screens/settings.dart';
 
 class FPDrawerWidget extends StatefulWidget {
   @override
@@ -36,9 +39,6 @@ class _FPDrawerWidgetState extends State<FPDrawerWidget> {
     alerts.forEach((alert) {
       alertsWidgetList.add(InkWell(
         onTap: () {
-          print(alert.forum.url);
-          print(alert.thread.threadid);
-
           double pages = alert.thread.postcount / 30;
           int pagenumber = ((alert.post.postnumber -1) / 30).ceil();
 
@@ -54,12 +54,12 @@ class _FPDrawerWidgetState extends State<FPDrawerWidget> {
         child: Container(
           padding: EdgeInsets.only(top: 12, bottom: 12, left: 10, right: 10),
           decoration: BoxDecoration(
-            color: alert.seen ? Colors.grey.withOpacity(0.3) : Colors.white,
+            color: alertListItemBackground(context, alert.seen),
             border: BorderDirectional(
               top: BorderSide(color: Colors.grey),
             ),
           ),
-          child: AlertsHelper().alertHandler(alert),
+          child: AlertsHelper().alertHandler(alert, context),
         ),
       ));
     });
@@ -74,6 +74,7 @@ class _FPDrawerWidgetState extends State<FPDrawerWidget> {
     var rating = await showDialog(
         context: context, builder: (BuildContext context) => dialog);
   }
+  
 
   List<Widget> loggedInList(context) {
     final username =
@@ -170,15 +171,20 @@ class _FPDrawerWidgetState extends State<FPDrawerWidget> {
         },
       ),
       ListTile(
+        title: Text('Settings'),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SettingsScreen(appContext: context,)),
+          );
+        },
+      ),
+      ListTile(
         title: Text('Logout'),
         onTap: () async {
           ScopedModel.of<DrawerModel>(context).logout();
           CookieManager.deleteAllCookies();
         },
-      ),
-      ListTile(
-        title: Text('Settings (Not available)'),
-        enabled: false,
       ),
     ];
   }
@@ -243,8 +249,13 @@ class _FPDrawerWidgetState extends State<FPDrawerWidget> {
         },
       ),
       ListTile(
-        title: Text('Settings (Not available)'),
-        enabled: false,
+        title: Text('Settings'),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SettingsScreen()),
+          );
+        },
       ),
     ];
   }

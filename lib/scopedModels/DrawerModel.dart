@@ -29,6 +29,16 @@ class DrawerModel extends Model {
   int get level => _level;
   String get backgroundImage => _backgroundImage;
 
+  DrawerModel() {
+    SharedPreferences.getInstance().then((prefs) {
+      this._backgroundImage = prefs.getString('cachedBackgroundImage');
+      this._username = prefs.getString('cachedUsername');
+      this._avatar = prefs.getString('cachedAvatar');
+      this._level = prefs.getInt('cachedLevel');
+      notifyListeners();
+    });
+  }
+
   void updateLoginState() async {
     print('Update login State');
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -57,6 +67,14 @@ class DrawerModel extends Model {
       _avatar = userinfo.avatar;
       _level = userinfo.level;
       _backgroundImage = userinfo.backgroundImage;
+
+      SharedPreferences.getInstance().then((prefs) {
+        prefs.setString('cachedUsername', userinfo.username);
+        prefs.setString('cachedAvatar', userinfo.avatar);
+        prefs.setInt('cachedLevel', userinfo.level);
+        prefs.setString('cachedBackgroundImage', userinfo.backgroundImage);
+      });
+      
       notifyListeners();
     });
   }

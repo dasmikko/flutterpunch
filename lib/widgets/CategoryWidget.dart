@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_punch/models/ForumsModel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:flutter_punch/helpers/ColorHelper.dart';
 
 class CategoryWidget extends StatelessWidget {
   final String categoryTitle;
@@ -40,8 +41,8 @@ class CategoryWidget extends StatelessWidget {
       children: <Widget>[
         Container(
           decoration: new BoxDecoration(
-              color: Colors.blueGrey[50],
-              border: new Border.all(color: Colors.blueGrey[100])),
+              color: categoryHeaderItemBackground(context),
+              border: new Border.all(color: categoryHeaderItemBorder(context))),
           padding: EdgeInsets.all(16.0),
           child: Text(categoryTitle),
         ),

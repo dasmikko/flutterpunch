@@ -3,9 +3,10 @@ import 'package:flutter_punch/models/AlertsModel.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/parser.dart';
+import 'package:flutter_punch/helpers/ColorHelper.dart';
 
 class AlertsHelper {
-  Widget alertHandler(SingleAlertModel alert) {
+  Widget alertHandler(SingleAlertModel alert, BuildContext context) {
     switch (alert.alertType) {
       case 6: // replied to thread
         return Row(
@@ -26,7 +27,7 @@ class AlertsHelper {
                   RichText(
                     text: TextSpan(
                       text: alert.user.username,
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: alertListItemText(context, alert.seen)),
                       children: <TextSpan>[
                         TextSpan(text: ' replied to ', style: TextStyle(fontWeight: FontWeight.normal)),
                         TextSpan(text: alert.thread.name, style: TextStyle(fontWeight: FontWeight.bold))
@@ -56,7 +57,7 @@ class AlertsHelper {
                   RichText(
                     text: TextSpan(
                       text: alert.user.username,
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: alertListItemText(context, alert.seen)),
                       children: <TextSpan>[
                         TextSpan(text: ' replied to yout post in ', style: TextStyle(fontWeight: FontWeight.normal)),
                         TextSpan(text: alert.thread.name, style: TextStyle(fontWeight: FontWeight.bold))
@@ -86,7 +87,7 @@ class AlertsHelper {
                   RichText(
                     text: TextSpan(
                       text: alert.user.username,
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: alertListItemText(context, alert.seen)),
                       children: <TextSpan>[
                         TextSpan(text: ' gave you ', style: TextStyle(fontWeight: FontWeight.normal)),
                         TextSpan(text: alert.dataNumber.toInt().toString(), style: TextStyle(fontWeight: FontWeight.bold)),

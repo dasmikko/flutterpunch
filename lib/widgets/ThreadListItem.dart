@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_punch/models/ThreadModel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:flutter_punch/helpers/ColorHelper.dart';
 
 class ThreadListItem extends StatelessWidget {
   final ThreadModel thread;
@@ -15,7 +16,7 @@ class ThreadListItem extends StatelessWidget {
       onTap: () => onTapItem(thread),
       child: Container(
         decoration:
-            BoxDecoration(color: thread.isSticky ? Colors.green[100] : null),
+            BoxDecoration(color: threadListItemBackground(thread.isSticky, context)),
         padding: EdgeInsets.only(top: 8.0, bottom: 8.0, right: 14.0),
         child: Row(
           children: <Widget>[
@@ -37,7 +38,7 @@ class ThreadListItem extends StatelessWidget {
                       thread.title,
                       style: TextStyle(
                           fontSize: 14.0,
-                          color: thread.isSticky ? Colors.green[500] : Colors.blue[400],
+                          color: threadListItemTitle(thread.isSticky, context),
                           fontWeight: FontWeight.bold),
                     ),
                   ),

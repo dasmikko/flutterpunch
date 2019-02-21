@@ -3,17 +3,26 @@ import 'package:flutter_punch/screens/home.dart';
 import 'package:flutter_punch/screens/forum.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_punch/scopedModels/DrawerModel.dart';
+import 'package:flutter_punch/themes/DefaultTheme.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 
 void main() {
   Widget rv;
-
-  rv = MaterialApp(
-    title: 'Flutter punch',
-    theme: ThemeData(
+  
+  rv = new DynamicTheme(
+    defaultBrightness: Brightness.dark,
+    data: (brightness) => ThemeData(
       primarySwatch: Colors.red,
+      brightness: brightness,
+      accentColor: Colors.red
     ),
-    home: Home()
-  );
+    themedWidgetBuilder: (context, theme) {
+      return MaterialApp(
+        title: 'Flutter punch',
+        theme: theme,
+        home: Home()
+      );
+    });
 
   rv = ScopedModel<DrawerModel>(model: DrawerModel(), child: rv);
 

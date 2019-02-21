@@ -21,7 +21,7 @@ dependencies:
   dio: 2.0.1
   html: ^0.13.3+3
   sqflite: any
-  shared_preferences: ^0.4.3
+  shared_preferences: ^0.5.0
   chewie: ^0.9.3
   video_player: ^0.7.0
   flutter_inappbrowser: ^0.5.51
@@ -38,6 +38,9 @@ dependencies:
   url_launcher: ^5.0.0
   flutter_webview_plugin: ^0.3.0+2
   parallax_image: ^0.3.1
+  dynamic_theme: ^1.0.1
+  simple_permissions: ^0.1.9
+  path_provider: ^0.5.0+1
   
 
   # The following adds the Cupertino Icons font to your application.

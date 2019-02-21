@@ -4,6 +4,7 @@ import 'package:flutter_punch/helpers/Ratings.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:parallax_image/parallax_image.dart';
+import 'package:flutter_punch/helpers/ColorHelper.dart';
 
 Widget userNameText(String userRank, String username) {
   switch (userRank) {
@@ -46,7 +47,7 @@ Widget postHeader(
     return Container(
       margin: EdgeInsets.only(bottom: 8.0),
       decoration: BoxDecoration(
-        color: Colors.blueGrey[50],
+        color: postHeaderNoBackground(context),
         border: BorderDirectional(
           top: BorderSide(color: Colors.grey),
           bottom: BorderSide(color: Colors.grey),
@@ -65,7 +66,7 @@ Widget postHeader(
             top: 8.0,
             bottom: 8.0,
           ),
-          color: Colors.white.withOpacity(0.8),
+          color: postHeaderBackground(context),
           child: Row(
             children: <Widget>[
               Container(
@@ -91,7 +92,7 @@ Widget postHeader(
     return Container(
       margin: EdgeInsets.only(bottom: 8.0),
       decoration: BoxDecoration(
-        color: Colors.blueGrey[50],
+        color: postHeaderNoBackground(context),
         border: BorderDirectional(
           top: BorderSide(color: Colors.grey),
           bottom: BorderSide(color: Colors.grey),
@@ -105,7 +106,7 @@ Widget postHeader(
           top: 8.0,
           bottom: 8.0,
         ),
-        color: Colors.white.withOpacity(0.5),
+        color: postHeaderBackground(context),
         child: Row(
           children: <Widget>[
             Container(
