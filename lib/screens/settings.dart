@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:flutter_punch/screens/Settings/filter.dart';
 
 
 class SettingsScreen extends StatefulWidget {
@@ -54,6 +55,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
               value: _isUsingDarkTheme,
             ),
+            ListTile(
+              title: Text('Filter'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FilterScreen()),
+                );
+              },
+            )
           ],
         ),
       ),
