@@ -1,5 +1,6 @@
 # Project Flutter Punch
 [![Codemagic build status](https://api.codemagic.io/apps/5c4de4ea033c3f000fa04ef1/5c4de4ea033c3f000fa04ef0/status_badge.svg)](https://codemagic.io/apps/5c4de4ea033c3f000fa04ef1/5c4de4ea033c3f000fa04ef0/latest_build)
+<img src="http://img.shields.io/liberapay/patrons/rekNa.svg?logo=liberapay">
 
 New and fresh Facepunch app, made in Flutter,
 
