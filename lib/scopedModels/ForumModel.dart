@@ -5,6 +5,7 @@ import 'package:flutter_punch/models/ThreadModel.dart';
 import 'package:flutter_punch/helpers/API.dart';
 import 'dart:convert';
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ForumModelScoped extends Model {
   ThreadListModel _threadList =
@@ -27,8 +28,27 @@ class ForumModelScoped extends Model {
   }
 
   Future<Null> getForum(String url) async {
-    await APIHelper().fetchForum(url).then((data) {
-      _threadList = data;
+    await APIHelper().fetchForum(url).then((data) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      ThreadListModel threadData = new ThreadListModel(threads: new List<ThreadModel>());
+
+      if (!prefs.getBool('showNSFWThreads')) {
+        threadData = new ThreadListModel(
+          threads: data.threads.where((item) => !item.title.contains('Hottest Illustrated Girls')).toList(),
+          currentPage: data.currentPage,
+          totalPages: data.totalPages
+        );
+      } else {
+        threadData = new ThreadListModel(
+          threads: data.threads,
+          currentPage: data.currentPage,
+          totalPages: data.totalPages
+        );
+      }
+
+
+      _threadList = threadData;
 
       // Then notify all the listeners.
       notifyListeners();
