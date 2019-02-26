@@ -23,8 +23,9 @@ import 'package:flutter_advanced_networkimage/transition.dart';
 
 class ThreadScreen extends StatefulWidget {
   final ThreadModel thread;
+  final bool useUnreadUrl;
 
-  ThreadScreen({@required this.thread});
+  ThreadScreen({@required this.thread, this.useUnreadUrl});
 
   @override
   _ThreadScreenState createState() => _ThreadScreenState();
@@ -43,6 +44,12 @@ class _ThreadScreenState extends State<ThreadScreen> {
 
     if (widget.thread.pageNumber != null) {
       _model.updatePageNumber(widget.thread.pageNumber);
+    }
+
+    if (widget.useUnreadUrl) {
+      var query = widget.thread.lastUnreadUrl.split('/');
+      int pageNumber = int.parse(query.elementAt(query.length - 2));
+      _model.updatePageNumber(pageNumber);
     }
 
     WidgetsBinding.instance

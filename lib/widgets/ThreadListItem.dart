@@ -3,20 +3,23 @@ import 'package:flutter_punch/models/ThreadModel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_punch/helpers/ColorHelper.dart';
+import 'package:universal_widget/universal_widget.dart';
 
 class ThreadListItem extends StatelessWidget {
   final ThreadModel thread;
   final ValueChanged<ThreadModel> onTapItem;
+  final ValueChanged<ThreadModel> onTapUnread;
 
-  ThreadListItem({@required this.thread, @required this.onTapItem});
+  ThreadListItem(
+      {@required this.thread, @required this.onTapItem, this.onTapUnread});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => onTapItem(thread),
       child: Container(
-        decoration:
-            BoxDecoration(color: threadListItemBackground(thread.isSticky, context)),
+        decoration: BoxDecoration(
+            color: threadListItemBackground(thread.isSticky, context)),
         padding: EdgeInsets.only(top: 8.0, bottom: 8.0, right: 14.0),
         child: Row(
           children: <Widget>[
@@ -42,12 +45,36 @@ class ThreadListItem extends StatelessWidget {
                           fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Text(
-                    thread.creator.username,
-                    style: TextStyle(
-                        fontSize: 12.0,
-                        color: thread.isSticky ? Colors.green[800] : Colors.blue[800],
-                        fontWeight: FontWeight.bold),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        thread.creator.username,
+                        style: TextStyle(
+                            fontSize: 12.0,
+                            color: thread.isSticky
+                                ? Colors.green[800]
+                                : Colors.blue[800],
+                            fontWeight: FontWeight.bold),
+                      ),
+                      UniversalWidget(
+                        opacity: thread.unreadPostsCount > 0 ? 1.0 : 0.0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Color(0xffaaaa46)),
+                            color: Colors.yellow[100],
+                          ),
+                          padding: EdgeInsets.all(4.0),
+                          margin: EdgeInsets.only(left: 8.0),
+                          child: InkWell(
+                            onTap: () => onTapUnread(thread),
+                            child: Text(
+                              "${thread.unreadPostsCount} unread",
+                              style: TextStyle(color: Color(0xffaaaa46)),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

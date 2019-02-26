@@ -60,6 +60,14 @@ class _MyAppState extends State<ForumScreen> {
     );
   }
 
+  void onTapUnread(ThreadModel thread) {
+    print(thread.url);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ThreadScreen(thread: thread, useUnreadUrl: true,)),
+    );
+  }
+
   void changePage(int number) {
     _model.updatePageNumber(number);
     _refreshIndicatorKey.currentState.show();
@@ -80,6 +88,7 @@ class _MyAppState extends State<ForumScreen> {
           return ThreadListItem(
             thread: model.thread.threads[index],
             onTapItem: onTapThread,
+            onTapUnread: onTapUnread,
           );
         },
       ),

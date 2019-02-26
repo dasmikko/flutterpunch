@@ -24,6 +24,11 @@ class CategoryWidget extends StatelessWidget {
         image: NetworkImage(icon),
         width: 30,
       );
+    } else if (forumId == "vidz") {
+      return Image(
+        image: NetworkImage(icon),
+        width: 30,
+      );
     } else {
       return SvgPicture(
         AdvancedNetworkSvg(icon, SvgPicture.svgByteDecoder, useDiskCache: true),

@@ -1,5 +1,6 @@
 class ThreadModel {
   final String url;
+  final String lastUnreadUrl;
   final String icon;
   final String title;
   final bool isSticky;
@@ -8,6 +9,7 @@ class ThreadModel {
   final int postcount;
   final ThreadCreatorModel creator;
   final int pageNumber;
+  final int unreadPostsCount;
 
   ThreadModel({
     this.url,
@@ -18,7 +20,9 @@ class ThreadModel {
     this.threadagedays,
     this.postcount,
     this.creator,
-    this.pageNumber
+    this.pageNumber,
+    this.unreadPostsCount,
+    this.lastUnreadUrl
   });
 
   factory ThreadModel.fromJson(Map<String, dynamic> json) {
@@ -30,7 +34,9 @@ class ThreadModel {
       viewedcount: json['viewedcount'],
       threadagedays: json['threadagedays'],
       postcount: json['postcount'],
-      creator: ThreadCreatorModel.fromJson(json['creator'])
+      creator: ThreadCreatorModel.fromJson(json['creator']),
+      unreadPostsCount: json['unreadPostsCount'],
+      lastUnreadUrl: json['lastUnreadUrl']
     );
   }
 }
