@@ -1,4 +1,5 @@
 class PostModel {
+  final String type;
   final UserModel user;
   final String contentAsHtml;
   final PostMeta meta;
@@ -7,17 +8,30 @@ class PostModel {
   final bool canReply;
   final bool isOwnPost;
 
-  PostModel({this.user, this.contentAsHtml, this.meta, this.postId, this.canVote, this.canReply, this.isOwnPost});
+  PostModel(
+      {this.user,
+      this.contentAsHtml,
+      this.meta,
+      this.postId,
+      this.canVote,
+      this.canReply,
+      this.isOwnPost,
+      this.type});
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
-    return PostModel(
-      postId: json['postid'],
-      canReply: json['canreply'],
-      canVote: json['canvote'],
-      isOwnPost: json['isownpost'],
-      user: UserModel.fromJson(json['user']),
-      contentAsHtml: json['contentAsHtml'],
-      meta: PostMeta.fromJson(json['meta']));
+    if (json['type'] == 'post') {
+      return PostModel(
+          type: json['type'],
+          postId: json['postid'],
+          canReply: json['canreply'],
+          canVote: json['canvote'],
+          isOwnPost: json['isownpost'],
+          user: UserModel.fromJson(json['user']),
+          contentAsHtml: json['contentAsHtml'],
+          meta: PostMeta.fromJson(json['meta']));
+    } else {
+      return PostModel(type: json['type']);
+    }
   }
 }
 
@@ -55,11 +69,9 @@ class UserModel {
 class PostMeta {
   final dynamic votes;
 
-  PostMeta({ this.votes });
+  PostMeta({this.votes});
 
   factory PostMeta.fromJson(Map<String, dynamic> json) {
-    return PostMeta(
-      votes: json['Votes']
-    );
+    return PostMeta(votes: json['Votes']);
   }
 }

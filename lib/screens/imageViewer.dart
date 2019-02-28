@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'dart:io';
 import 'package:flutter_punch/helpers/Download.dart';
+import 'package:flutter/services.dart';
 
 class ImageViewerScreen extends StatelessWidget {
   final String url;
@@ -25,11 +26,19 @@ class ImageViewerScreen extends StatelessWidget {
           // action button
           IconButton(
             icon: Icon(Icons.file_download),
+            tooltip: "Download image",
             onPressed: () async {
-              print("download");
-
-              var scaffoldContext = context;
               DownloadHelper().downloadFile(url, _scaffoldKey);              
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.content_copy),
+            tooltip: "Copy image link",
+            onPressed: () async {
+              Clipboard.setData(new ClipboardData(text: url));
+              _scaffoldKey.currentState.showSnackBar(new SnackBar(
+                content: Text('Image link copied to clipboard'),
+              ));             
             },
           ),
         ],

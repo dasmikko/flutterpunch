@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 
 class APIHelper {
-  final baseURL = 'https://facepunch-api-eu.herokuapp.com/';
+  final baseURL = 'https://npd-dev.herokuapp.com/';
 
   Future<CategoryListModel> fetchCategories() async {
     print('Fetching categories');

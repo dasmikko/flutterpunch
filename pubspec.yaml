@@ -25,11 +25,8 @@ dependencies:
   chewie: ^0.9.3
   video_player: ^0.7.0
   flutter_inappbrowser: ^0.5.51
-  flutter_svg: ^0.10.3
-  flutter_advanced_networkimage: 
-    git: 
-      url: https://github.com/mchome/flutter_advanced_networkimage.git
-      ref: 8e364a72aeb58dbecc6cc65196b0342478e264df
+  flutter_svg: ^0.10.4
+  flutter_advanced_networkimage: ^0.4.11
   flutter_youtube: ^1.1.4
   flutter_html: ^0.9.3
   universal_widget: ^1.2.5
@@ -41,6 +38,8 @@ dependencies:
   dynamic_theme: ^1.0.1
   simple_permissions: ^0.1.9
   path_provider: ^0.5.0+1
+  indexed_list_view: ^0.0.5
+
   
 
   # The following adds the Cupertino Icons font to your application.

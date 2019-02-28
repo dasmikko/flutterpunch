@@ -20,12 +20,14 @@ import 'package:flutter_punch/widgets/PostElements/PostFooter.dart';
 import 'package:flutter_punch/widgets/PostElements/PostHeader.dart';
 import 'package:flutter_punch/widgets/PostElements/Youtube.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_punch/widgets/PostElements/Image.dart';
 
 class ThreadScreen extends StatefulWidget {
   final ThreadModel thread;
   final bool useUnreadUrl;
 
-  ThreadScreen({@required this.thread, this.useUnreadUrl});
+  ThreadScreen({@required this.thread, this.useUnreadUrl: false});
 
   @override
   _ThreadScreenState createState() => _ThreadScreenState();
@@ -37,6 +39,8 @@ class _ThreadScreenState extends State<ThreadScreen> {
   PostListSM _model = PostListSM();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
+
+  final scaffoldkey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -96,33 +100,16 @@ class _ThreadScreenState extends State<ThreadScreen> {
   Widget handleWidget(dom.Node node) {
     switch (node.attributes['contenttype']) {
       case 'image':
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      ImageViewerScreen(url: node.attributes['url'])),
-            );
-          },
-          child: Container(
-            height: 200,
-            margin: EdgeInsets.only(bottom: 8.0),
-            child: Hero(
-              tag: node.attributes['url'],
-              child: TransitionToImage(
-                image: AdvancedNetworkImage(node.attributes['url'],
-                    useDiskCache: true)
-              ),
-            ),
-          ),
+        return ImageWidget(
+          url: node.attributes['url'],
+          scaffoldKey: scaffoldkey,
         );
         break;
       case 'youtube':
         return YouTubeEmbed(url: node.attributes['url'].toString());
         break;
       case 'video':
-        return VideoElement(node.attributes['url']);
+        return VideoElement(node.attributes['url'], scaffoldkey);
       default:
         return EmbedWidget(node.attributes['url']);
     }
@@ -178,47 +165,67 @@ class _ThreadScreenState extends State<ThreadScreen> {
       controller: _scrollController,
       itemCount: model.posts.posts.length,
       itemBuilder: (context, index) {
-        var post = model.posts.posts[index];
+        PostModel post = model.posts.posts[index];
 
-        return Container(
-          margin: EdgeInsets.only(bottom: 10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              postHeader(post, context, _scrollController),
-              Container(
-                padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                child: Html(
-                  data: post.contentAsHtml,
-                  onLinkTap: (url) {
-                    launchUrl(url);
-                  },
-                  customRender: (node, children) {
-                    if (node is dom.Element) {
-                      switch (node.localName) {
-                        case "hotlink":
-                          return handleWidget(node);
-                          break;
-                        case "postquote":
-                          return handlePostquote(node);
-                          break;
+        if (post.type == 'post') {
+          return Container(
+            margin: EdgeInsets.only(bottom: 10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                postHeader(post, context, _scrollController),
+                Container(
+                  padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: Html(
+                    data: post.contentAsHtml,
+                    onLinkTap: (url) {
+                      launchUrl(url);
+                    },
+                    customRender: (node, children) {
+                      if (node is dom.Element) {
+                        switch (node.localName) {
+                          case "hotlink":
+                            return handleWidget(node);
+                            break;
+                          case "postquote":
+                            return handlePostquote(node);
+                            break;
+                        }
                       }
-                    }
-                  },
+                    },
+                  ),
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.only(left: 8.0, right: 8.0),
-                child: postFooter(post, () => _refreshIndicatorKey.currentState.show(), context),
-              )
-            ],
-          ),
-        );
+                Container(
+                  margin: EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: postFooter(post,
+                      () => _refreshIndicatorKey.currentState.show(), context),
+                )
+              ],
+            ),
+          );
+        } else {
+          return Container(
+              padding: EdgeInsets.all(12.0),
+              color: Colors.green[200],
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(right: 8),
+                    child: Icon(
+                      Icons.bookmark,
+                      color: Colors.green[600],
+                    ),
+                  ),
+                  Text(
+                    'Read just now',
+                    style: TextStyle(color: Colors.green[600], fontSize: 15.0),
+                  ),
+                ],
+              ));
+        }
       },
     );
   }
-
-  
 
   void showJumpDialog() {
     showDialog<int>(
@@ -238,6 +245,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldkey,
       appBar: AppBar(
         title: Text(widget.thread.title),
         actions: <Widget>[
