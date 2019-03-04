@@ -11,7 +11,10 @@ Widget postFooter(
   List<Widget> lastColumn = new List();
 
   if (post.meta.votes != null && post.meta.votes.length > 0) {
-    for (var vote in post.meta.votes.keys) {
+    var compare = (b, a) => int.parse(a).compareTo(int.parse(b));
+
+    var sortedKeys = post.meta.votes.keys.toList()..sort(compare);
+    for (var vote in sortedKeys) {
       Rating rating = RatingsHelper()
           .ratingsList
           .where((i) => i.id == int.parse(vote))
