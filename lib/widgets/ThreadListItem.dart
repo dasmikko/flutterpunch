@@ -57,7 +57,7 @@ class ThreadListItem extends StatelessWidget {
                             fontWeight: FontWeight.bold),
                       ),
                       UniversalWidget(
-                        opacity: thread.unreadPostsCount > 0 ? 1.0 : 0.0,
+                        visible: thread.unreadPostsCount > 0 ? true : false,
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border.all(color: Color(0xffaaaa46)),

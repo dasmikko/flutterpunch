@@ -18,10 +18,10 @@ import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_punch/widgets/PostElements/PostFooter.dart';
 import 'package:flutter_punch/widgets/PostElements/PostHeader.dart';
-import 'package:flutter_punch/widgets/PostElements/Youtube.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_punch/widgets/PostElements/Image.dart';
+import 'package:flutter_punch/widgets/PostElements/YouTubeEmbed.dart';
 
 class ThreadScreen extends StatefulWidget {
   final ThreadModel thread;
@@ -106,7 +106,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
         );
         break;
       case 'youtube':
-        return YouTubeEmbed(url: node.attributes['url'].toString());
+        return YoutubeVideoEmbed(url: node.attributes['url'].toString());
         break;
       case 'video':
         return VideoElement(node.attributes['url'], scaffoldkey);
