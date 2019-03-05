@@ -38,7 +38,7 @@ dependencies:
   dynamic_theme: ^1.0.1
   simple_permissions: ^0.1.9
   path_provider: ^0.5.0+1
-  indexed_list_view: ^0.0.5
+  timeago: ^2.0.10
 
   
 

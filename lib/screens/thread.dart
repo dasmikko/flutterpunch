@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_punch/models/ThreadModel.dart';
 import 'package:flutter_punch/models/PostListModel.dart';
 import 'package:flutter_punch/models/PostModel.dart';
-import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:flutter_punch/screens/imageViewer.dart';
 import 'package:universal_widget/universal_widget.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_punch/scopedModels/PostListSM.dart';
@@ -18,10 +16,10 @@ import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_punch/widgets/PostElements/PostFooter.dart';
 import 'package:flutter_punch/widgets/PostElements/PostHeader.dart';
-import 'package:flutter_advanced_networkimage/transition.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_punch/widgets/PostElements/Image.dart';
 import 'package:flutter_punch/widgets/PostElements/YouTubeEmbed.dart';
+import 'package:timeago/timeago.dart' as timeago;
+
 
 class ThreadScreen extends StatefulWidget {
   final ThreadModel thread;
@@ -204,6 +202,8 @@ class _ThreadScreenState extends State<ThreadScreen> {
             ),
           );
         } else {
+          final datetimething = new DateTime.fromMillisecondsSinceEpoch(post.timeAgo * 1000);
+
           return Container(
               padding: EdgeInsets.all(12.0),
               color: Colors.green[200],
@@ -217,7 +217,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
                     ),
                   ),
                   Text(
-                    'Read just now',
+                    "Read ${timeago.format(datetimething)}",
                     style: TextStyle(color: Colors.green[600], fontSize: 15.0),
                   ),
                 ],

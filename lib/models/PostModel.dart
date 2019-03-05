@@ -1,5 +1,6 @@
 class PostModel {
   final String type;
+  final int timeAgo;
   final UserModel user;
   final String contentAsHtml;
   final PostMeta meta;
@@ -16,7 +17,8 @@ class PostModel {
       this.canVote,
       this.canReply,
       this.isOwnPost,
-      this.type});
+      this.type,
+      this.timeAgo});
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
     if (json['type'] == 'post') {
@@ -30,7 +32,9 @@ class PostModel {
           contentAsHtml: json['contentAsHtml'],
           meta: PostMeta.fromJson(json['meta']));
     } else {
-      return PostModel(type: json['type']);
+      return PostModel(
+        type: json['type'],
+        timeAgo: json['timeago']);
     }
   }
 }
