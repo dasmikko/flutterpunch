@@ -6,6 +6,8 @@ import 'package:flutter_svg/parser.dart';
 import 'package:flutter_punch/helpers/ColorHelper.dart';
 
 class AlertsHelper {
+  bool notNull(Object o) => o != null;
+
   Widget alertHandler(SingleAlertModel alert, BuildContext context) {
     switch (alert.alertType) {
       case 0: // Coins
@@ -205,12 +207,12 @@ class AlertsHelper {
                       text: alert.user.username,
                       style: TextStyle(fontWeight: FontWeight.bold, color: alertListItemText(context, alert.seen)),
                       children: <TextSpan>[
-                        alert.dataNumber > 1 ? TextSpan(text: ' and ', style: TextStyle(fontWeight: FontWeight.normal)) : null,
-                        alert.dataNumber > 1 ? TextSpan(text: "${dataNumberAsInt-1} ", style: TextStyle(fontWeight: FontWeight.bold)) : null,
-                        alert.dataNumber > 2 ? TextSpan(text: "others", style: TextStyle(fontWeight: FontWeight.bold)) : TextSpan(text: "other", style: TextStyle(fontWeight: FontWeight.bold)),
+                        alert.dataNumber != null && alert.dataNumber > 1 ? TextSpan(text: ' and ', style: TextStyle(fontWeight: FontWeight.normal)) : null,
+                        alert.dataNumber != null && alert.dataNumber > 1 ? TextSpan(text: "${dataNumberAsInt-1} ", style: TextStyle(fontWeight: FontWeight.bold)) : null,
+                        alert.dataNumber != null && alert.dataNumber > 2 ? TextSpan(text: "others", style: TextStyle(fontWeight: FontWeight.bold)) : TextSpan(text: "other", style: TextStyle(fontWeight: FontWeight.bold)),
                         TextSpan(text: ' replied to ', style: TextStyle(fontWeight: FontWeight.normal)),
                         TextSpan(text: alert.thread.name, style: TextStyle(fontWeight: FontWeight.bold))
-                      ]
+                      ].where(notNull).toList()
                     ),
                   ),
                 ],
