@@ -4,6 +4,7 @@ import 'package:flutter_punch/helpers/Ratings.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_punch/helpers/API.dart';
+import 'dart:collection';
 
 Widget postFooter(
     PostModel post, Function refreshMethod, BuildContext context) {
@@ -11,9 +12,12 @@ Widget postFooter(
   List<Widget> lastColumn = new List();
 
   if (post.meta.votes != null && post.meta.votes.length > 0) {
-    var compare = (b, a) => int.parse(a).compareTo(int.parse(b));
+    var compare = (b, a) { 
+      return int.parse(post.meta.votes[a].toString()).compareTo(int.parse(post.meta.votes[b].toString()));
+    };
 
     var sortedKeys = post.meta.votes.keys.toList()..sort(compare);
+    
     for (var vote in sortedKeys) {
       Rating rating = RatingsHelper()
           .ratingsList
